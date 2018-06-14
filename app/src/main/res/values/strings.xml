@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Tags Pro</string>
     <string name="action_settings">Settings</string>
+    <string name="tag_collection_edit">Edit</string>
+    <string name="tag_collection_select">Select</string>
+    <string name="tag_collection_delete">Delete</string>
 </resources>

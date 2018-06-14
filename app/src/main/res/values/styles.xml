@@ -26,10 +26,16 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
     </style>
 
-    <style name="CardFlatButton" parent="AppTheme">
+    <style name="CardFlatAction" parent="AppTheme">
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:clickable">true</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
+    <style name="CardFlatButton" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:padding">8dp</item>
     </style>
 </resources>
