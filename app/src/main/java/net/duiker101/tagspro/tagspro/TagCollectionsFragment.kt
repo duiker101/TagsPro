@@ -10,23 +10,96 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class TagCollectionsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private val collections = ArrayList<TagCollection>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_main, container, false)
         viewManager = LinearLayoutManager(activity)
 
-        val collections = ArrayList<TagCollection>()
         collections.apply {
             val collection = TagCollection("Collection1")
             collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", true))
             collection.add(Tag("Tag3", false))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection2")
+            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag2", false))
+            collection.add(Tag("Tag3", true))
             add(collection)
         }
         collections.apply {
@@ -46,12 +119,33 @@ class TagCollectionsFragment : Fragment() {
 
         return rootView
     }
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: AddTagEvent) {
+        collections.forEach { it.forEach { if (it.name == event.tag) it.active = true } }
+        viewAdapter.notifyDataSetChanged()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: RemoveTagEvent) {
+        collections.forEach { it.forEach { if (it.name == event.tag) it.active = false } }
+        viewAdapter.notifyDataSetChanged()
+    }
 
 }
 
 class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) : RecyclerView.Adapter<TagCollectionsAdapter.ViewHolder>() {
 
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+    class ViewHolder(val view: View, val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): TagCollectionsAdapter.ViewHolder {
@@ -63,10 +157,13 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) :
         val adapter = TagsAdapter()
         recycler.adapter = adapter
 
-        return ViewHolder(view)
+        return ViewHolder(view, adapter)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.adapter.tags = collections[position]
+        holder.adapter.notifyDataSetChanged()
+
     }
 
     override fun getItemCount() = collections.size
@@ -75,15 +172,17 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) :
 class TagsAdapter : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
     class ViewHolder(val view: TagView) : RecyclerView.ViewHolder(view)
 
+    lateinit var tags: TagCollection
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(TagView(parent.context, null))
     }
 
     override fun getItemCount(): Int {
-        return 5
+        return tags.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.view.text = "Test $position"
+        holder.view.tag = tags[position]
     }
 }

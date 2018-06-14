@@ -1,29 +1,36 @@
 package net.duiker101.tagspro.tagspro
 
 import android.content.Context
-import android.graphics.ColorFilter
+import android.graphics.LightingColorFilter
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
 import android.widget.Button
-import android.graphics.LightingColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import org.greenrobot.eventbus.EventBus
 
 
 class TagView(context: Context, attributes: AttributeSet?) :
         Button(ContextThemeWrapper(context, R.style.TagStyle), attributes, 0) {
-    private var active: Boolean = false
+
+    var tag: Tag = Tag("", false)
+        set(value) {
+            field = value
+            text = value.name
+            updateBackground()
+        }
 
     init {
-        toggle()
         setOnClickListener {
-            active = !active
-            toggle()
+            tag.active = !(tag.active)
+            if (tag.active)
+                EventBus.getDefault().post(AddTagEvent(text as String))
+            else
+                EventBus.getDefault().post(RemoveTagEvent(text as String))
+            updateBackground()
         }
     }
 
-    private fun toggle() {
-        if (active)
+    private fun updateBackground(){
+        if (tag.active)
             background.colorFilter = LightingColorFilter(0x000000, 0x55efc4)
         else
             background.colorFilter = LightingColorFilter(0x000000, 0xeeeeee)
