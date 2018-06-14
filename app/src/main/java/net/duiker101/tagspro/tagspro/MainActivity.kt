@@ -83,16 +83,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: AddTagEvent) {
-        activeTags.add(Tag(event.tag, true))
-        activeTagsAdapter.notifyDataSetChanged()
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: RemoveTagEvent) {
-//        activeTags.add(Tag(event.tag, true))
-        activeTags.removeAll { it.name == event.tag }
+    fun onMessageEvent(event: TagEvent) {
+        if(event.tag.active)
+            activeTags.add(event.tag)
+        else
+            activeTags.removeAll { it.name == event.tag.name }
         activeTagsAdapter.notifyDataSetChanged()
     }
 }

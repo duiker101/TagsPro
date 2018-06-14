@@ -2,7 +2,6 @@ package net.duiker101.tagspro.tagspro
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -28,85 +27,85 @@ class TagCollectionsFragment : Fragment() {
         collections.apply {
             val collection = TagCollection("Collection1")
             collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", true))
+            collection.add(Tag("Tag2", false))
             collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", true))
+            collection.add(Tag("Tag1", false))
             collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", true))
+            collection.add(Tag("Tag3", false))
             add(collection)
         }
 
@@ -119,6 +118,9 @@ class TagCollectionsFragment : Fragment() {
 
         return rootView
     }
+
+
+    // Event bus system, when a tag gets added/remove loop all the collections to activate/deactivate that tag
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -130,17 +132,10 @@ class TagCollectionsFragment : Fragment() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: AddTagEvent) {
-        collections.forEach { it.forEach { if (it.name == event.tag) it.active = true } }
+    fun onMessageEvent(event: TagEvent) {
+        collections.forEach { it.forEach { if (it.name == event.tag.name) it.active = event.tag.active } }
         viewAdapter.notifyDataSetChanged()
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: RemoveTagEvent) {
-        collections.forEach { it.forEach { if (it.name == event.tag) it.active = false } }
-        viewAdapter.notifyDataSetChanged()
-    }
-
 }
 
 class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) : RecyclerView.Adapter<TagCollectionsAdapter.ViewHolder>() {

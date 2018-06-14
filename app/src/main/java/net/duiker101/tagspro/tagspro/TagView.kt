@@ -21,15 +21,12 @@ class TagView(context: Context, attributes: AttributeSet?) :
     init {
         setOnClickListener {
             tag.active = !(tag.active)
-            if (tag.active)
-                EventBus.getDefault().post(AddTagEvent(text as String))
-            else
-                EventBus.getDefault().post(RemoveTagEvent(text as String))
+            EventBus.getDefault().post(TagEvent(tag))
             updateBackground()
         }
     }
 
-    private fun updateBackground(){
+    private fun updateBackground() {
         if (tag.active)
             background.colorFilter = LightingColorFilter(0x000000, 0x55efc4)
         else
