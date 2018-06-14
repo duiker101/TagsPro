@@ -4,4 +4,5 @@
     <string name="tag_collection_edit">Edit</string>
     <string name="tag_collection_select">Select</string>
     <string name="tag_collection_delete">Delete</string>
+    <string name="tag_name">#%s</string>
 </resources>

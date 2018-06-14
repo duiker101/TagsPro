@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import org.greenrobot.eventbus.EventBus
@@ -33,79 +36,37 @@ class TagCollectionsFragment : Fragment() {
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
             collection.add(Tag("Tag3", false))
+            collection.add(Tag("Tag5", false))
+            collection.add(Tag("Tag6", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
+            collection.add(Tag("Tag7", false))
+            collection.add(Tag("Tag8", false))
+            collection.add(Tag("Tag9", false))
+            add(collection)
+        }
+        collections.apply {
+            val collection = TagCollection("Collection1")
+            collection.add(Tag("Tag11", false))
+            collection.add(Tag("Tag12", false))
+            collection.add(Tag("Tag13", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
+            collection.add(Tag("Tag13", false))
+            collection.add(Tag("Tag15", false))
+            collection.add(Tag("Tag16", false))
             add(collection)
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
+            collection.add(Tag("Tag17", false))
+            collection.add(Tag("Tag18", false))
+            collection.add(Tag("Tag19", false))
             add(collection)
         }
 
@@ -131,16 +92,24 @@ class TagCollectionsFragment : Fragment() {
         EventBus.getDefault().unregister(this)
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     fun onMessageEvent(event: TagEvent) {
-        collections.forEach { it.forEach { if (it.name == event.tag.name) it.active = event.tag.active } }
-        viewAdapter.notifyDataSetChanged()
+        var i = 0
+        collections.forEach {
+            it.forEach {
+                if (it.name == event.tag.name) {
+                    viewAdapter.notifyItemChanged(i, it)
+                    it.active = event.tag.active
+                }
+            }
+            i++
+        }
     }
 }
 
 class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) : RecyclerView.Adapter<TagCollectionsAdapter.ViewHolder>() {
 
-    class ViewHolder(val view: View, val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
+    class ViewHolder(val view: View, val selectButton: ImageButton, val deselectButton: ImageButton, val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): TagCollectionsAdapter.ViewHolder {
@@ -152,13 +121,31 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) :
         val adapter = TagsAdapter()
         recycler.adapter = adapter
 
-        return ViewHolder(view, adapter)
+        val selectButton = view.findViewById<ImageButton>(R.id.action_select)
+        val deselectButton = view.findViewById<ImageButton>(R.id.action_deselect)
+
+        return ViewHolder(view, selectButton, deselectButton, adapter)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.adapter.tags = collections[position]
         holder.adapter.notifyDataSetChanged()
 
+        holder.selectButton.setOnClickListener {
+            collections[position].forEach {
+                it.active = true
+                EventBus.getDefault().post(TagEvent(it))
+            }
+            holder.adapter.notifyDataSetChanged()
+        }
+
+        holder.deselectButton.setOnClickListener {
+            collections[position].forEach {
+                it.active = false
+                EventBus.getDefault().post(TagEvent(it))
+            }
+            holder.adapter.notifyDataSetChanged()
+        }
     }
 
     override fun getItemCount() = collections.size

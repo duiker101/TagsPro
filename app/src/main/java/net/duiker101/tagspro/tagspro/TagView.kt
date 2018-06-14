@@ -14,7 +14,7 @@ class TagView(context: Context, attributes: AttributeSet?) :
     var tag: Tag = Tag("", false)
         set(value) {
             field = value
-            text = value.name
+            text = context.getString(R.string.tag_name, value.name)
             updateBackground()
         }
 

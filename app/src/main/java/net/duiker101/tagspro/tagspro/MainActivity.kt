@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.google.android.flexbox.FlexDirection
@@ -31,9 +32,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-//        actionBar.navigationMode = ActionBar.NAVIGATION_MODE_TABS
-
 
         val tabLayout: TabLayout = findViewById(R.id.tabs)
         tabLayout.addTab(tabLayout.newTab().setText("Tags"))
@@ -84,7 +82,8 @@ class MainActivity : AppCompatActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: TagEvent) {
-        if(event.tag.active)
+        Log.w("Simone","Message 1 ${event.tag.name} ${event.tag.active}")
+        if (event.tag.active && activeTags.count { it.name == event.tag.name } == 0)
             activeTags.add(event.tag)
         else
             activeTags.removeAll { it.name == event.tag.name }
