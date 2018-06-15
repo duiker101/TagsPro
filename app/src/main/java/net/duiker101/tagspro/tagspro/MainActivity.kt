@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         mViewPager.adapter = mAdapter
         tabLayout.setupWithViewPager(mViewPager)
 
-        activeTagsAdapter = TagsAdapter({ tagModified(it) })
+        activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags), { tagModified(it) })
 
         val recycler = findViewById<RecyclerView>(R.id.selected_tags_recycler)
         val layoutManager = FlexboxLayoutManager(this)
@@ -135,16 +135,21 @@ class MainActivity : AppCompatActivity() {
 
 class MainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     val collectionsFrag = TagCollectionsFragment()
+    val exploreTagsFragment = ExploreTagsFragment()
 
-    override fun getCount(): Int = 1
+    override fun getCount(): Int = 2
 
     override fun getItem(i: Int): Fragment {
         if (i == 0)
             return collectionsFrag
-        return collectionsFrag
+        return exploreTagsFragment
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return "OBJECT " + (position + 1)
+        if (position == 0)
+            return "My Tags"
+        else if (position == 1)
+            return "Explore"
+        return ""
     }
 }

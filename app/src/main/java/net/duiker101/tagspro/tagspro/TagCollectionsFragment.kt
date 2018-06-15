@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 
@@ -31,9 +32,6 @@ class TagCollectionsFragment : Fragment() {
         }
         collections.apply {
             val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag3", false))
-            collection.add(Tag("Tag5", false))
-            collection.add(Tag("Tag6", false))
             add(collection)
         }
         collections.apply {
@@ -65,7 +63,7 @@ class TagCollectionsFragment : Fragment() {
             add(collection)
         }
 
-        viewAdapter = TagCollectionsAdapter(collections, { tagModified(it,true) })
+        viewAdapter = TagCollectionsAdapter(collections, { tagModified(it, true) })
 
         recyclerView = rootView.findViewById<RecyclerView>(R.id.my_recycler_view).apply {
             layoutManager = viewManager
@@ -76,7 +74,7 @@ class TagCollectionsFragment : Fragment() {
     }
 
 
-    fun tagModified(tag: Tag, notify:Boolean) {
+    fun tagModified(tag: Tag, notify: Boolean) {
         var i = 0
         collections.forEach {
             it.forEach {
@@ -88,7 +86,7 @@ class TagCollectionsFragment : Fragment() {
             i++
         }
 
-        if(notify)
+        if (notify)
             (activity as MainActivity).tagModified(tag)
     }
 }
@@ -109,7 +107,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         val layoutManager = FlexboxLayoutManager(parent.context)
         layoutManager.flexDirection = FlexDirection.ROW
         recycler.layoutManager = layoutManager
-        val adapter = TagsAdapter(listener)
+        val adapter = TagsAdapter(parent.context.getString(R.string.default_no_tag_in_group), listener)
         recycler.adapter = adapter
 
         val selectButton = view.findViewById<ImageButton>(R.id.action_select)
@@ -119,8 +117,14 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.adapter.tags = collections[position]
+        val tags = collections[position]
+        holder.adapter.tags = tags
         holder.adapter.notifyDataSetChanged()
+
+        if (tags.size == 0) {
+            holder.selectButton.visibility = View.GONE
+            holder.deselectButton.visibility = View.GONE
+        }
 
         holder.selectButton.setOnClickListener {
             collections[position].forEach {
@@ -143,20 +147,36 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
 }
 
 
-class TagsAdapter(private val listener: (tag: Tag) -> Unit) : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
-    class ViewHolder(val view: TagView) : RecyclerView.ViewHolder(view)
+class TagsAdapter(private val defaultMsg: String, private val listener: (tag: Tag) -> Unit) : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
     lateinit var tags: TagCollection
 
+    companion object {
+        const val TYPE_DEFAULT = 0
+        const val TYPE_TAG = 1
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(TagView(parent.context, null, listener))
+        return if (viewType == TYPE_DEFAULT) {
+            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.listitem_default_text, parent, false))
+        } else
+            ViewHolder(TagView(parent.context, null, listener))
     }
 
     override fun getItemCount(): Int {
-        return tags.size
+        return if (tags.size == 0) 1 else tags.size
+    }
+
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0 && tags.size == 0) TYPE_DEFAULT else TYPE_TAG
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.view.tag = tags[position]
+        if (holder.itemViewType == TYPE_TAG)
+            (holder.view as TagView).tag = tags[position]
+        else
+            (holder.view as TextView).text = defaultMsg
     }
 }
