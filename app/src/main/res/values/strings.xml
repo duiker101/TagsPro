@@ -5,4 +5,7 @@
     <string name="tag_collection_select">Select</string>
     <string name="tag_collection_delete">Delete</string>
     <string name="tag_name">#%s</string>
+    <string name="open_instagram">Open Instagram</string>
+    <string name="copy_successful">%d Tags copied to your clipboard</string>
+    <string name="active_tags">%d Active Tags</string>
 </resources>

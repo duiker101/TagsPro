@@ -5,10 +5,9 @@ import android.graphics.LightingColorFilter
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
 import android.widget.Button
-import org.greenrobot.eventbus.EventBus
 
 
-class TagView(context: Context, attributes: AttributeSet?) :
+class TagView(context: Context, attributes: AttributeSet?, private val listener: (tag: Tag) -> Unit) :
         Button(ContextThemeWrapper(context, R.style.TagStyle), attributes, 0) {
 
     var tag: Tag = Tag("", false)
@@ -20,10 +19,14 @@ class TagView(context: Context, attributes: AttributeSet?) :
 
     init {
         setOnClickListener {
-            tag.active = !(tag.active)
-            EventBus.getDefault().post(TagEvent(tag))
-            updateBackground()
+            toggle(!tag.active)
         }
+    }
+
+    fun toggle(on: Boolean) {
+        tag.active = on
+        updateBackground()
+        listener(tag)
     }
 
     private fun updateBackground() {

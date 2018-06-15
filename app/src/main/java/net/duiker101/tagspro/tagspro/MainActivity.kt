@@ -1,5 +1,7 @@
 package net.duiker101.tagspro.tagspro
 
+import android.content.ClipData
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
@@ -7,18 +9,16 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageButton
+import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
-
 import kotlinx.android.synthetic.main.activity_main.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.ThreadMode
-import org.greenrobot.eventbus.Subscribe
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,7 +26,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mAdapter: MainPagerAdapter
     private lateinit var mViewPager: ViewPager
     private val activeTags = TagCollection("Active")
-    private val activeTagsAdapter = TagsAdapter()
+    private lateinit var activeTagsAdapter: TagsAdapter
+    private lateinit var activeTagsText: TextView
+    private lateinit var bottomSheet: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,10 +44,15 @@ class MainActivity : AppCompatActivity() {
 //                    .setAction("Action", null).show()
 //        }
 
+        activeTagsText = findViewById(R.id.active_tags_text)
+        activeTagsText.text = getString(R.string.active_tags, 0)
+
         mAdapter = MainPagerAdapter(supportFragmentManager)
         mViewPager = findViewById(R.id.pager)
         mViewPager.adapter = mAdapter
         tabLayout.setupWithViewPager(mViewPager)
+
+        activeTagsAdapter = TagsAdapter({ tagModified(it) })
 
         val recycler = findViewById<RecyclerView>(R.id.selected_tags_recycler)
         val layoutManager = FlexboxLayoutManager(this)
@@ -53,6 +60,61 @@ class MainActivity : AppCompatActivity() {
         recycler.layoutManager = layoutManager
         recycler.adapter = activeTagsAdapter
         activeTagsAdapter.tags = activeTags
+        bottomSheet = findViewById<View>(R.id.bottom_sheet)
+
+        findViewById<ImageButton>(R.id.action_copy).setOnClickListener listener@{
+            if (activeTags.size == 0) {
+                Snackbar.make(bottomSheet, "No tags selected", Snackbar.LENGTH_SHORT).show()
+                return@listener
+            }
+
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val result = StringBuilder()
+            activeTags.forEach {
+                result.append("#${it.name} ")
+            }
+            val clip = ClipData.newPlainText("tags", result.toString())
+            clipboard.primaryClip = clip
+
+            val snack = Snackbar.make(bottomSheet, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
+            snack.setAction(R.string.open_instagram, {
+                val launchIntent = packageManager.getLaunchIntentForPackage("com.instagram.android")
+                if (launchIntent != null) {
+                    startActivity(launchIntent)//null pointer check in case package name was not found
+                }
+            })
+//            val view = snack.view
+//            val params = view.layoutParams as FrameLayout.LayoutParams
+//            params.gravity = Gravity.TOP
+//            view.layoutParams = params
+            snack.show()
+        }
+
+        findViewById<ImageButton>(R.id.action_shuffle).setOnClickListener {
+            activeTags.shuffle()
+            activeTagsAdapter.notifyDataSetChanged()
+        }
+
+        findViewById<ImageButton>(R.id.action_deselect).setOnClickListener {
+            ArrayList(activeTags).forEach {
+                it.active = false
+                tagModified(it)
+            }
+            activeTagsAdapter.notifyDataSetChanged()
+        }
+    }
+
+    fun tagModified(tag: Tag) {
+        if (tag.active/* && activeTags.count { it.name == event.tag.name } == 0*/) {
+//            if(activeTags.size == 0)
+            if (activeTags.count { it.name == tag.name } == 0) {
+                activeTags.add(tag)
+            }
+        } else
+            activeTags.removeAll { it.name == tag.name }
+        activeTagsText.text = getString(R.string.active_tags, activeTags.size)
+        activeTagsAdapter.notifyDataSetChanged()
+        mAdapter.collectionsFrag.tagModified(tag, false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -69,34 +131,17 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: TagEvent) {
-        Log.w("Simone","Message 1 ${event.tag.name} ${event.tag.active}")
-        if (event.tag.active && activeTags.count { it.name == event.tag.name } == 0)
-            activeTags.add(event.tag)
-        else
-            activeTags.removeAll { it.name == event.tag.name }
-        activeTagsAdapter.notifyDataSetChanged()
-    }
 }
 
 class MainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
-    override fun getCount(): Int = 2
+    val collectionsFrag = TagCollectionsFragment()
+
+    override fun getCount(): Int = 1
 
     override fun getItem(i: Int): Fragment {
-        val fragment = TagCollectionsFragment()
-        return fragment
+        if (i == 0)
+            return collectionsFrag
+        return collectionsFrag
     }
 
     override fun getPageTitle(position: Int): CharSequence {

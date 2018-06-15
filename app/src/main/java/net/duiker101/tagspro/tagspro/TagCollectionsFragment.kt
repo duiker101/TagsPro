@@ -4,17 +4,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 class TagCollectionsFragment : Fragment() {
 
@@ -70,7 +65,7 @@ class TagCollectionsFragment : Fragment() {
             add(collection)
         }
 
-        viewAdapter = TagCollectionsAdapter(collections)
+        viewAdapter = TagCollectionsAdapter(collections, { tagModified(it,true) })
 
         recyclerView = rootView.findViewById<RecyclerView>(R.id.my_recycler_view).apply {
             layoutManager = viewManager
@@ -81,35 +76,31 @@ class TagCollectionsFragment : Fragment() {
     }
 
 
-    // Event bus system, when a tag gets added/remove loop all the collections to activate/deactivate that tag
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    fun onMessageEvent(event: TagEvent) {
+    fun tagModified(tag: Tag, notify:Boolean) {
         var i = 0
         collections.forEach {
             it.forEach {
-                if (it.name == event.tag.name) {
+                if (it.name == tag.name) {
+                    it.active = tag.active
                     viewAdapter.notifyItemChanged(i, it)
-                    it.active = event.tag.active
                 }
             }
             i++
         }
+
+        if(notify)
+            (activity as MainActivity).tagModified(tag)
     }
 }
 
-class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) : RecyclerView.Adapter<TagCollectionsAdapter.ViewHolder>() {
+class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
+                            private val listener: (tag: Tag) -> Unit)
+    : RecyclerView.Adapter<TagCollectionsAdapter.ViewHolder>() {
 
-    class ViewHolder(val view: View, val selectButton: ImageButton, val deselectButton: ImageButton, val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
+    class ViewHolder(val view: View,
+                     val selectButton: ImageButton,
+                     val deselectButton: ImageButton,
+                     val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): TagCollectionsAdapter.ViewHolder {
@@ -118,7 +109,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) :
         val layoutManager = FlexboxLayoutManager(parent.context)
         layoutManager.flexDirection = FlexDirection.ROW
         recycler.layoutManager = layoutManager
-        val adapter = TagsAdapter()
+        val adapter = TagsAdapter(listener)
         recycler.adapter = adapter
 
         val selectButton = view.findViewById<ImageButton>(R.id.action_select)
@@ -134,7 +125,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) :
         holder.selectButton.setOnClickListener {
             collections[position].forEach {
                 it.active = true
-                EventBus.getDefault().post(TagEvent(it))
+                listener(it)
             }
             holder.adapter.notifyDataSetChanged()
         }
@@ -142,7 +133,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) :
         holder.deselectButton.setOnClickListener {
             collections[position].forEach {
                 it.active = false
-                EventBus.getDefault().post(TagEvent(it))
+                listener(it)
             }
             holder.adapter.notifyDataSetChanged()
         }
@@ -151,13 +142,14 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>) :
     override fun getItemCount() = collections.size
 }
 
-class TagsAdapter : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
+
+class TagsAdapter(private val listener: (tag: Tag) -> Unit) : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
     class ViewHolder(val view: TagView) : RecyclerView.ViewHolder(view)
 
     lateinit var tags: TagCollection
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(TagView(parent.context, null))
+        return ViewHolder(TagView(parent.context, null, listener))
     }
 
     override fun getItemCount(): Int {
