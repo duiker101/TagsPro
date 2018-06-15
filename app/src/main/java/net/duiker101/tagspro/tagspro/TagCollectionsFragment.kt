@@ -26,43 +26,8 @@ class TagCollectionsFragment : Fragment() {
         collections.apply {
             val collection = TagCollection("Collection1")
             collection.add(Tag("Tag1", false))
-            collection.add(Tag("Tag2", false))
-            collection.add(Tag("Tag3", false))
             add(collection)
         }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag7", false))
-            collection.add(Tag("Tag8", false))
-            collection.add(Tag("Tag9", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection1")
-            collection.add(Tag("Tag11", false))
-            collection.add(Tag("Tag12", false))
-            collection.add(Tag("Tag13", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag13", false))
-            collection.add(Tag("Tag15", false))
-            collection.add(Tag("Tag16", false))
-            add(collection)
-        }
-        collections.apply {
-            val collection = TagCollection("Collection2")
-            collection.add(Tag("Tag17", false))
-            collection.add(Tag("Tag18", false))
-            collection.add(Tag("Tag19", false))
-            add(collection)
-        }
-
         viewAdapter = TagCollectionsAdapter(collections, { tagModified(it, true) })
 
         recyclerView = rootView.findViewById<RecyclerView>(R.id.my_recycler_view).apply {
@@ -96,6 +61,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
     : RecyclerView.Adapter<TagCollectionsAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View,
+                     val title: TextView,
                      val selectButton: ImageButton,
                      val deselectButton: ImageButton,
                      val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
@@ -110,10 +76,11 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         val adapter = TagsAdapter(parent.context.getString(R.string.default_no_tag_in_group), listener)
         recycler.adapter = adapter
 
-        val selectButton = view.findViewById<ImageButton>(R.id.action_select)
-        val deselectButton = view.findViewById<ImageButton>(R.id.action_deselect)
-
-        return ViewHolder(view, selectButton, deselectButton, adapter)
+        return ViewHolder(view,
+                view.findViewById(R.id.title_text),
+                view.findViewById(R.id.action_select),
+                view.findViewById(R.id.action_deselect),
+                adapter)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -121,9 +88,13 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         holder.adapter.tags = tags
         holder.adapter.notifyDataSetChanged()
 
+        holder.title.text = tags.name
         if (tags.size == 0) {
             holder.selectButton.visibility = View.GONE
             holder.deselectButton.visibility = View.GONE
+        }else{
+            holder.selectButton.visibility = View.VISIBLE
+            holder.deselectButton.visibility = View.VISIBLE
         }
 
         holder.selectButton.setOnClickListener {

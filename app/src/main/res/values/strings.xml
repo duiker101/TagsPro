@@ -10,4 +10,8 @@
     <string name="active_tags">%d Active Tags</string>
     <string name="default_no_tag_in_group">No tags in this group</string>
     <string name="default_no_active_tags">No active Tags. Click on a tag to activate it</string>
+    <string name="edit_collection">Edit Collection</string>
+    <string name="tags_count">%d Tags</string>
+    <string name="save">Save</string>
+    <string name="default_tags">&#35;cool &#35;tags &#35;only hash_optional</string>
 </resources>

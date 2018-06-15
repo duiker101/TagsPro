@@ -2,7 +2,9 @@ package net.duiker101.tagspro.tagspro
 
 import android.content.ClipData
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -29,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activeTagsAdapter: TagsAdapter
     private lateinit var activeTagsText: TextView
     private lateinit var bottomSheet: View
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +43,9 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addTab(tabLayout.newTab().setText("Tags"))
         tabLayout.addTab(tabLayout.newTab().setText("Explore"))
 
-//        fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show()
-//        }
+        fab.setOnClickListener {
+            startActivity(Intent(this, EditCollectionActivity::class.java))
+        }
 
         activeTagsText = findViewById(R.id.active_tags_text)
         activeTagsText.text = getString(R.string.active_tags, 0)
@@ -61,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         recycler.adapter = activeTagsAdapter
         activeTagsAdapter.tags = activeTags
         bottomSheet = findViewById<View>(R.id.bottom_sheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
         findViewById<ImageButton>(R.id.action_copy).setOnClickListener listener@{
             if (activeTags.size == 0) {
@@ -83,6 +87,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(launchIntent)//null pointer check in case package name was not found
                 }
             })
+            // to have the snackbar on top
 //            val view = snack.view
 //            val params = view.layoutParams as FrameLayout.LayoutParams
 //            params.gravity = Gravity.TOP
@@ -105,13 +110,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun tagModified(tag: Tag) {
-        if (tag.active/* && activeTags.count { it.name == event.tag.name } == 0*/) {
-//            if(activeTags.size == 0)
+        if (tag.active) {
+            if (activeTags.size == 0)
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             if (activeTags.count { it.name == tag.name } == 0) {
                 activeTags.add(tag)
             }
-        } else
+        } else {
             activeTags.removeAll { it.name == tag.name }
+            if (activeTags.size == 0)
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
         activeTagsText.text = getString(R.string.active_tags, activeTags.size)
         activeTagsAdapter.notifyDataSetChanged()
         mAdapter.collectionsFrag.tagModified(tag, false)
