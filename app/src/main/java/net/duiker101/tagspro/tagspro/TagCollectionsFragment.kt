@@ -72,6 +72,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
     class ViewHolder(val view: View,
                      val title: TextView,
                      val selectButton: ImageButton,
+                     val shuffleButton: ImageButton,
                      val deselectButton: ImageButton,
                      val overflow: ImageButton,
                      val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
@@ -89,6 +90,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         return ViewHolder(view,
                 view.findViewById(R.id.title_text),
                 view.findViewById(R.id.action_select),
+                view.findViewById(R.id.action_shuffle),
                 view.findViewById(R.id.action_deselect),
                 view.findViewById(R.id.action_overflow),
                 adapter)
@@ -114,6 +116,14 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         holder.selectButton.setOnClickListener {
             tags.forEach {
                 it.active = true
+                listener(it)
+            }
+            holder.adapter.notifyDataSetChanged()
+        }
+
+        holder.shuffleButton.setOnClickListener {
+            tags.forEach {
+                it.active = ((Math.random() * 1000).toInt() + 1) % 2 == 0
                 listener(it)
             }
             holder.adapter.notifyDataSetChanged()

@@ -34,17 +34,27 @@
         style="@style/CardFlatButton"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:tint="@color/colorAccent"
+        android:tint="#aaa"
         app:layout_constraintTop_toBottomOf="@id/recyclerView"
         app:srcCompat="@drawable/ic_check_white_24dp" />
+
+    <ImageButton
+        android:id="@+id/action_shuffle"
+        style="@style/CardFlatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:tint="#aaa"
+        app:layout_constraintLeft_toRightOf="@id/action_select"
+        app:layout_constraintTop_toBottomOf="@id/recyclerView"
+        app:srcCompat="@drawable/ic_shuffle_white_24dp" />
 
     <ImageButton
         android:id="@+id/action_deselect"
         style="@style/CardFlatButton"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:tint="@color/colorAccent"
-        app:layout_constraintLeft_toRightOf="@id/action_select"
+        android:tint="#aaa"
+        app:layout_constraintLeft_toRightOf="@id/action_shuffle"
         app:layout_constraintTop_toBottomOf="@id/recyclerView"
         app:srcCompat="@drawable/ic_clear_white_24dp" />
 
