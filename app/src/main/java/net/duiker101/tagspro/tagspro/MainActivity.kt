@@ -22,6 +22,7 @@ import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val REQUEST_CREATE_COLLECTION = 0
+        const val REQUEST_EDIT_COLLECTION = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,17 +91,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == REQUEST_CREATE_COLLECTION) {
-            if (resultCode == Activity.RESULT_OK) {
-                val tags = data.getStringArrayListExtra("tags")
-                val title = data.getStringExtra("title")
-
-                val collection = TagCollection(title)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val tags = data.getStringArrayListExtra("tags")
+            val title = data.getStringExtra("title")
+            if (requestCode == REQUEST_CREATE_COLLECTION) {
+                val collection = TagCollection(title, UUID.randomUUID().toString())
                 tags.forEach { collection.tags.add(Tag(it, false)) }
                 mAdapter.collectionsFrag.addCollection(collection)
 
                 TagPersistance.save(this, mAdapter.collectionsFrag.collections)
+            }
+            if (requestCode == REQUEST_EDIT_COLLECTION) {
+                // if we don't collapse here there can be some problem with the bar
+                val id = data.getStringExtra("id")
+                val collection = mAdapter.collectionsFrag.collections.first { it.id == id }
+                collection.name = title
+                collection.tags.forEach {
+                    it.active = false
+                    tagModified(it)
+                }
+                collection.tags.clear()
+
+                tags.forEach { collection.tags.add(Tag(it, false)) }
+                TagPersistance.save(this, mAdapter.collectionsFrag.collections)
+                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
+
+//                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
     }
@@ -113,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
         val result = StringBuilder()
         activeTags.forEach {
-            result.append("#${it.name} ")
+            result.append("${it.name} ")
         }
         val clip = ClipData.newPlainText("tags", result.toString())
         clipboard.primaryClip = clip
@@ -135,14 +153,14 @@ class MainActivity : AppCompatActivity() {
 
     fun tagModified(tag: Tag) {
         if (tag.active) {
-            if (activeTags.size == 0)
+            if (activeTags.size == 0 && bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED)
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             if (activeTags.count { it.name == tag.name } == 0) {
                 activeTags.add(tag)
             }
         } else {
             activeTags.removeAll { it.name == tag.name }
-            if (activeTags.size == 0)
+            if (activeTags.size == 0 && bottomSheetBehavior.state != BottomSheetBehavior.STATE_COLLAPSED)
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         activeTagsText.text = getString(R.string.active_tags, activeTags.size)

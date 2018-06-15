@@ -1,9 +1,12 @@
 package net.duiker101.tagspro.tagspro
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,19 +15,20 @@ import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
+import net.duiker101.tagspro.tagspro.MainActivity.Companion.REQUEST_EDIT_COLLECTION
 
 
 class TagCollectionsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     val collections = ArrayList<TagCollection>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_main, container, false)
         viewManager = LinearLayoutManager(activity)
-        viewAdapter = TagCollectionsAdapter(collections, { tagModified(it, true) })
+        viewAdapter = TagCollectionsAdapter(collections, { tagModified(it, true) }, { viewAdapter.notifyDataSetChanged() })
 
         collections.addAll(TagPersistance.load(activity as Context))
 
@@ -61,13 +65,15 @@ class TagCollectionsFragment : Fragment() {
 }
 
 class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
-                            private val listener: (tag: Tag) -> Unit)
+                            private val listener: (tag: Tag) -> Unit,
+                            private val notifyListener: () -> Unit)
     : RecyclerView.Adapter<TagCollectionsAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View,
                      val title: TextView,
                      val selectButton: ImageButton,
                      val deselectButton: ImageButton,
+                     val overflow: ImageButton,
                      val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup,
@@ -84,6 +90,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
                 view.findViewById(R.id.title_text),
                 view.findViewById(R.id.action_select),
                 view.findViewById(R.id.action_deselect),
+                view.findViewById(R.id.action_overflow),
                 adapter)
     }
 
@@ -118,6 +125,41 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
                 listener(it)
             }
             holder.adapter.notifyDataSetChanged()
+        }
+        val context = holder.view.context
+        holder.overflow.setOnClickListener {
+            val popup = PopupMenu(context, holder.overflow)
+
+            popup.menuInflater.inflate(R.menu.menu_collection, popup.menu)
+            popup.setOnMenuItemClickListener {
+                if (it.itemId == R.id.action_delete) {
+                    collections.filter { it.id == collection.id }.forEach {
+                        it.tags.forEach {
+                            it.active = false
+                            listener(it)
+                        }
+                    }
+                    collections.removeAll { it.id == collection.id }
+                    TagPersistance.save(context, collections)
+                    notifyListener()
+                }
+                if (it.itemId == R.id.action_edit) {
+                    val result = StringBuilder()
+                    tags.forEach {
+                        result.append("${it.name} ")
+                    }
+
+                    val intent = Intent(context, EditCollectionActivity::class.java)
+                    intent.putExtra("id", collection.id)
+                    intent.putExtra("title", collection.name)
+                    intent.putExtra("tags", result.toString())
+
+                    (context as Activity).startActivityForResult(intent, REQUEST_EDIT_COLLECTION)
+                }
+                true
+            }
+
+            popup.show()
         }
     }
 

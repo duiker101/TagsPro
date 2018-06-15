@@ -15,4 +15,6 @@
     <string name="save">Save</string>
     <string name="default_tags">&#35;cool &#35;tags &#35;only hash_optional @or_user</string>
     <string name="no_tags_selected">No tags selected</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>
