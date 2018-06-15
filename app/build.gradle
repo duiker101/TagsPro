@@ -1,8 +1,15 @@
 apply plugin: 'com.android.application'
 
-apply plugin: 'kotlin-android'
+//apply plugin: 'realm-android'
+//apply plugin: 'kotlin-kapt'
+//apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-kapt'
 
+apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 27
@@ -34,8 +41,9 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
 
     implementation 'com.google.android:flexbox:1.0.0'
-    implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

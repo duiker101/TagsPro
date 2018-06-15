@@ -1,5 +1,6 @@
 package net.duiker101.tagspro.tagspro
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 
+
 class TagCollectionsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
@@ -22,13 +24,9 @@ class TagCollectionsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_main, container, false)
         viewManager = LinearLayoutManager(activity)
-
-        collections.apply {
-            val collection = TagCollection("Collection1")
-            collection.add(Tag("Tag1", false))
-            add(collection)
-        }
         viewAdapter = TagCollectionsAdapter(collections, { tagModified(it, true) })
+
+        collections.addAll(TagPersistance.load(activity as Context))
 
         recyclerView = rootView.findViewById<RecyclerView>(R.id.my_recycler_view).apply {
             layoutManager = viewManager
@@ -42,7 +40,7 @@ class TagCollectionsFragment : Fragment() {
     fun tagModified(tag: Tag, notify: Boolean) {
         var i = 0
         collections.forEach {
-            it.forEach {
+            it.tags.forEach {
                 if (it.name == tag.name) {
                     it.active = tag.active
                     viewAdapter.notifyItemChanged(i, it)
@@ -90,11 +88,14 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val tags = collections[position]
-        holder.adapter.tags = tags
+        val collection = collections[position]
+        val tags = collection.tags
+
+        holder.adapter.tags.clear()
+        holder.adapter.tags.addAll(tags)
         holder.adapter.notifyDataSetChanged()
 
-        holder.title.text = tags.name
+        holder.title.text = collection.name
         if (tags.size == 0) {
             holder.selectButton.visibility = View.GONE
             holder.deselectButton.visibility = View.GONE
@@ -104,7 +105,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         }
 
         holder.selectButton.setOnClickListener {
-            collections[position].forEach {
+            tags.forEach {
                 it.active = true
                 listener(it)
             }
@@ -112,7 +113,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         }
 
         holder.deselectButton.setOnClickListener {
-            collections[position].forEach {
+            tags.forEach {
                 it.active = false
                 listener(it)
             }
@@ -127,7 +128,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
 class TagsAdapter(private val defaultMsg: String, private val listener: (tag: Tag) -> Unit) : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
-    lateinit var tags: TagCollection
+    var tags = ArrayList<Tag>()
 
     companion object {
         const val TYPE_DEFAULT = 0

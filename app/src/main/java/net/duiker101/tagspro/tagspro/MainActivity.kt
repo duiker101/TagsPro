@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: MainPagerAdapter
     private lateinit var mViewPager: ViewPager
-    private val activeTags = TagCollection("Active")
+    private val activeTags = ArrayList<Tag>()
     private lateinit var activeTagsAdapter: TagsAdapter
     private lateinit var activeTagsText: TextView
     private lateinit var bottomSheet: View
@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -95,8 +96,10 @@ class MainActivity : AppCompatActivity() {
                 val title = data.getStringExtra("title")
 
                 val collection = TagCollection(title)
-                tags.forEach { collection.add(Tag(it, false)) }
+                tags.forEach { collection.tags.add(Tag(it, false)) }
                 mAdapter.collectionsFrag.addCollection(collection)
+
+                TagPersistance.save(this, mAdapter.collectionsFrag.collections)
             }
         }
     }
