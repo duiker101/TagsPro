@@ -17,7 +17,7 @@ class TagCollectionsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private val collections = ArrayList<TagCollection>()
+    val collections = ArrayList<TagCollection>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_main, container, false)
@@ -53,6 +53,12 @@ class TagCollectionsFragment : Fragment() {
 
         if (notify)
             (activity as MainActivity).tagModified(tag)
+    }
+
+    fun addCollection(collection: TagCollection) {
+        collections.add(collection)
+//        viewAdapter.notifyItemInserted(collections.size - 1)
+        viewAdapter.notifyDataSetChanged()
     }
 }
 
@@ -92,7 +98,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         if (tags.size == 0) {
             holder.selectButton.visibility = View.GONE
             holder.deselectButton.visibility = View.GONE
-        }else{
+        } else {
             holder.selectButton.visibility = View.VISIBLE
             holder.deselectButton.visibility = View.VISIBLE
         }

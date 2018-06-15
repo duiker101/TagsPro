@@ -1,5 +1,7 @@
 package net.duiker101.tagspro.tagspro
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
@@ -11,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_edit_collection.*
 
 class EditCollectionActivity : AppCompatActivity() {
     val tags = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_collection)
@@ -38,9 +41,17 @@ class EditCollectionActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_save -> true
-            else -> super.onOptionsItemSelected(item)
+        if (item.itemId == R.id.action_save) {
+            val result = ArrayList(tags.map {
+                if (it.indexOf("#") < 0 && it.indexOf("@") < 0) "#$it" else it
+            })
+            val resultIntent = Intent()
+            resultIntent.putStringArrayListExtra("tags", result)
+            resultIntent.putExtra("title", title_text.text.toString())
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
+            return true
         }
+        return super.onOptionsItemSelected(item)
     }
 }

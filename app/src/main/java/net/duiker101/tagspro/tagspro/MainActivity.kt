@@ -1,5 +1,6 @@
 package net.duiker101.tagspro.tagspro
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
@@ -33,6 +34,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomSheet: View
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
+    companion object {
+        const val REQUEST_CREATE_COLLECTION = 0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addTab(tabLayout.newTab().setText("Explore"))
 
         fab.setOnClickListener {
-            startActivity(Intent(this, EditCollectionActivity::class.java))
+            startActivityForResult(Intent(this, EditCollectionActivity::class.java), REQUEST_CREATE_COLLECTION)
         }
 
         activeTagsText = findViewById(R.id.active_tags_text)
@@ -66,33 +70,8 @@ class MainActivity : AppCompatActivity() {
         bottomSheet = findViewById<View>(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
-        findViewById<ImageButton>(R.id.action_copy).setOnClickListener listener@{
-            if (activeTags.size == 0) {
-                Snackbar.make(bottomSheet, "No tags selected", Snackbar.LENGTH_SHORT).show()
-                return@listener
-            }
-
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-            val result = StringBuilder()
-            activeTags.forEach {
-                result.append("#${it.name} ")
-            }
-            val clip = ClipData.newPlainText("tags", result.toString())
-            clipboard.primaryClip = clip
-
-            val snack = Snackbar.make(bottomSheet, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
-            snack.setAction(R.string.open_instagram, {
-                val launchIntent = packageManager.getLaunchIntentForPackage("com.instagram.android")
-                if (launchIntent != null) {
-                    startActivity(launchIntent)//null pointer check in case package name was not found
-                }
-            })
-            // to have the snackbar on top
-//            val view = snack.view
-//            val params = view.layoutParams as FrameLayout.LayoutParams
-//            params.gravity = Gravity.TOP
-//            view.layoutParams = params
-            snack.show()
+        findViewById<ImageButton>(R.id.action_copy).setOnClickListener {
+            copyActiveTags()
         }
 
         findViewById<ImageButton>(R.id.action_shuffle).setOnClickListener {
@@ -107,6 +86,48 @@ class MainActivity : AppCompatActivity() {
             }
             activeTagsAdapter.notifyDataSetChanged()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (requestCode == REQUEST_CREATE_COLLECTION) {
+            if (resultCode == Activity.RESULT_OK) {
+                val tags = data.getStringArrayListExtra("tags")
+                val title = data.getStringExtra("title")
+
+                val collection = TagCollection(title)
+                tags.forEach { collection.add(Tag(it, false)) }
+                mAdapter.collectionsFrag.addCollection(collection)
+            }
+        }
+    }
+
+    private fun copyActiveTags() {
+        if (activeTags.size == 0) {
+            Snackbar.make(bottomSheet, getString(R.string.no_tags_selected), Snackbar.LENGTH_SHORT).show()
+            return
+        }
+
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        val result = StringBuilder()
+        activeTags.forEach {
+            result.append("#${it.name} ")
+        }
+        val clip = ClipData.newPlainText("tags", result.toString())
+        clipboard.primaryClip = clip
+
+        val snack = Snackbar.make(bottomSheet, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
+        snack.setAction(R.string.open_instagram, {
+            val launchIntent = packageManager.getLaunchIntentForPackage("com.instagram.android")
+            if (launchIntent != null) {
+                startActivity(launchIntent)//null pointer check in case package name was not found
+            }
+        })
+        // to have the snackbar on top
+//            val view = snack.view
+//            val params = view.layoutParams as FrameLayout.LayoutParams
+//            params.gravity = Gravity.TOP
+//            view.layoutParams = params
+        snack.show()
     }
 
     fun tagModified(tag: Tag) {
