@@ -22,6 +22,7 @@ import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_active_tags_bar.*
 import java.util.*
 
 
@@ -77,6 +78,8 @@ class MainActivity : AppCompatActivity() {
             copyActiveTags()
         }
 
+        // TODO save as new collection button
+
         findViewById<ImageButton>(R.id.action_shuffle).setOnClickListener {
             activeTags.shuffle()
             activeTagsAdapter.notifyDataSetChanged()
@@ -88,6 +91,19 @@ class MainActivity : AppCompatActivity() {
                 tagModified(it)
             }
             activeTagsAdapter.notifyDataSetChanged()
+        }
+
+        action_save.setOnClickListener {
+            val intent = Intent(this, EditCollectionActivity::class.java)
+
+            val result = StringBuilder()
+            activeTags.forEach {
+                result.append("${it.name} ")
+            }
+
+            intent.putExtra("tags", result.toString())
+
+            startActivityForResult(intent, REQUEST_CREATE_COLLECTION)
         }
     }
 

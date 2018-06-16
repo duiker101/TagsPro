@@ -20,41 +20,91 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.constraint.ConstraintLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/title_text"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:met_floatingLabel="highlight"
-                app:met_floatingLabelAlwaysShown="true"
-                app:met_floatingLabelText="Collection Title" />
+                android:layout_margin="8dp">
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tags_text"
-                android:hint="@string/default_tags"
-                app:layout_constraintTop_toBottomOf="@id/title_text"
-                android:inputType="textVisiblePassword|textMultiLine"
 
-                app:met_floatingLabel="highlight"
-                app:met_floatingLabelAlwaysShown="true"
-                app:met_floatingLabelText="Tags"
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/title_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelAlwaysShown="true"
+                    app:met_floatingLabelText="Collection Title" />
 
-                app:met_helperText="0 Tags" />
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/tags_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/default_tags"
+                    android:inputType="textVisiblePassword|textMultiLine"
+                    app:layout_constraintTop_toBottomOf="@id/title_text"
 
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelAlwaysShown="true"
+                    app:met_floatingLabelText="Tags"
+
+                    app:met_helperText="0 Tags" />
+
+            </android.support.constraint.ConstraintLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#eee">
+
+            <Button
+                android:id="@+id/symbol_at"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="\@" />
+
+            <Button
+                android:id="@+id/symbol_hash"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="#" />
+
+            <Button
+                android:id="@+id/symbol_dot"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="." />
+
+            <Button
+                android:id="@+id/symbol_underscore"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="_" />
+        </LinearLayout>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 
 

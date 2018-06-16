@@ -36,9 +36,25 @@ class EditCollectionActivity : AppCompatActivity() {
             }
         })
 
-        if (intent.hasExtra("id")) {
+        if (intent.hasExtra("tags")) {
+
             tags_text.setText(intent.getStringExtra("tags"))
+        }
+        if (intent.hasExtra("title")) {
             title_text.setText(intent.getStringExtra("title"))
+        }
+
+        symbol_underscore.setOnClickListener {
+            tags_text.text.insert(tags_text.selectionStart, "_")
+        }
+        symbol_dot.setOnClickListener {
+            tags_text.text.insert(tags_text.selectionStart, ".")
+        }
+        symbol_at.setOnClickListener {
+            tags_text.text.insert(tags_text.selectionStart, "@")
+        }
+        symbol_hash.setOnClickListener {
+            tags_text.text.insert(tags_text.selectionStart, "#")
         }
     }
 

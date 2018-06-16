@@ -87,6 +87,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
         val adapter = TagsAdapter(parent.context.getString(R.string.default_no_tag_in_group), listener)
         recycler.adapter = adapter
 
+        // TODO clone collectino button
         return ViewHolder(view,
                 view.findViewById(R.id.title_text),
                 view.findViewById(R.id.action_select),
@@ -153,6 +154,17 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
                     TagPersistance.save(context, collections)
                     notifyListener()
                 }
+//                if (it.itemId == R.id.action_delete_unselected) {
+//                    collections.filter { it.id == collection.id }.forEach {
+//                        it.tags.forEach {
+//                            it.active = false
+//                            listener(it)
+//                        }
+//                    }
+////                    collections.removeAll { it.id == collection.id }
+//                    TagPersistance.save(context, collections)
+////                    notifyListener()
+//                }
                 if (it.itemId == R.id.action_edit) {
                     val result = StringBuilder()
                     tags.forEach {
