@@ -7,7 +7,7 @@
     <string name="tag_name">#%s</string>
     <string name="open_instagram">Open Instagram</string>
     <string name="copy_successful">%d Tags copied to your clipboard</string>
-    <string name="active_tags">%d Active Tags</string>
+    <string name="active_tags_count">%d Active Tags</string>
     <string name="default_no_tag_in_group">No tags in this group</string>
     <string name="default_no_active_tags">No active Tags. Click on a tag to activate it</string>
     <string name="edit_collection">Edit Collection</string>
@@ -18,4 +18,7 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="delete_unselected">Delete Unselected</string>
+    <string name="settings">Settings</string>
+    <string name="active_tags">Active Tags</string>
+    <string name="preference_shuffle_on_copy">Shuffle on copy</string>
 </resources>

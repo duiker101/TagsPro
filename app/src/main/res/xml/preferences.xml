@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/settings">
+
+    <PreferenceCategory android:title="@string/active_tags">
+
+        <SwitchPreference
+            android:key="shuffle_on_copy"
+            android:title="@string/preference_shuffle_on_copy" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         activeTagsText = findViewById(R.id.active_tags_text)
-        activeTagsText.text = getString(R.string.active_tags, 0)
+        activeTagsText.text = getString(R.string.active_tags_count, 0)
 
         mAdapter = MainPagerAdapter(supportFragmentManager)
         mViewPager = findViewById(R.id.pager)
@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity() {
             if (activeTags.size == 0 && bottomSheetBehavior.state != BottomSheetBehavior.STATE_COLLAPSED)
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
-        activeTagsText.text = getString(R.string.active_tags, activeTags.size)
+        activeTagsText.text = getString(R.string.active_tags_count, activeTags.size)
         activeTagsAdapter.notifyDataSetChanged()
         mAdapter.collectionsFrag.tagModified(tag, false)
     }
@@ -193,10 +193,18 @@ class MainActivity : AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+//        return when (item.itemId) {
+//            R.id.action_settings -> {
+//
+//                true
+//            }
+//            else -> super.onOptionsItemSelected(item)
+//        }
+        if (item.itemId == R.id.action_settings) {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            return true
         }
+        return super.onOptionsItemSelected(item)
     }
 }
 
