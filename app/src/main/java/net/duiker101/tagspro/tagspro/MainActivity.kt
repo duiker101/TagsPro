@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
             val tags = data.getStringArrayListExtra("tags")
             val title = data.getStringExtra("title")
             if (requestCode == REQUEST_CREATE_COLLECTION) {
-                val collection = TagCollection(title, UUID.randomUUID().toString())
+                val collection = TagCollection(title, UUID.randomUUID().toString(), true)
                 tags.forEach { collection.tags.add(Tag(it, false)) }
                 mAdapter.collectionsFrag.addCollection(collection)
 
@@ -145,10 +146,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        val copy = ArrayList<Tag>(activeTags)
         val result = StringBuilder()
-        activeTags.forEach {
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val shouldShuffle = preferences.getBoolean("shuffle_on_copy", false)
+        if (shouldShuffle)
+            copy.shuffle()
+        copy.forEach {
             result.append("${it.name} ")
         }
+
         val clip = ClipData.newPlainText("tags", result.toString())
         clipboard.primaryClip = clip
 

@@ -8,6 +8,12 @@
             android:key="shuffle_on_copy"
             android:title="@string/preference_shuffle_on_copy" />
 
+        <!--TODO dots-->
+
+        <!--TODO Highlight recently used?-->
+
+        <!---->
+
     </PreferenceCategory>
 
 </PreferenceScreen>

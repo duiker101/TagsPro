@@ -40,6 +40,7 @@ class EditCollectionActivity : AppCompatActivity() {
 
             tags_text.setText(intent.getStringExtra("tags"))
         }
+
         if (intent.hasExtra("title")) {
             title_text.setText(intent.getStringExtra("title"))
         }

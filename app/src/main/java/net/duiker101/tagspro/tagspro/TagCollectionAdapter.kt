@@ -92,6 +92,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
             holder.adapter.notifyDataSetChanged()
         }
 
+
         if (collection.expanded)
             holder.recycler.visibility = View.VISIBLE
         else

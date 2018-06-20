@@ -22,4 +22,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 //        addPreferencesFromResource(R.xml.preferences)
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
+
+
 }
