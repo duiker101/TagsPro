@@ -150,23 +150,35 @@ class MainActivity : AppCompatActivity() {
         val result = StringBuilder()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val shouldShuffle = preferences.getBoolean("shuffle_on_copy", false)
-        if (shouldShuffle)
+        if (preferences.getBoolean("shuffle_on_copy", false))
             copy.shuffle()
+
+        val dots = preferences.getInt("dots_before_tags", 0)
+        for (x in 0..(dots - 1))
+            result.appendln(".")
+
+        val onePerLine = preferences.getBoolean("one_tag_per_line", false)
+        val spaceBetween = preferences.getBoolean("enable_space", true)
+
         copy.forEach {
-            result.append("${it.name} ")
+            if (onePerLine)
+                result.appendln(it.name)
+            else if (spaceBetween)
+                result.append("${it.name} ")
+            else
+                result.append(it.name)
         }
 
         val clip = ClipData.newPlainText("tags", result.toString())
         clipboard.primaryClip = clip
 
         val snack = Snackbar.make(bottomSheet, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
-        snack.setAction(R.string.open_instagram, {
+        snack.setAction(R.string.open_instagram) {
             val launchIntent = packageManager.getLaunchIntentForPackage("com.instagram.android")
             if (launchIntent != null) {
                 startActivity(launchIntent)//null pointer check in case package name was not found
             }
-        })
+        }
         // to have the snackbar on top
 //            val view = snack.view
 //            val params = view.layoutParams as FrameLayout.LayoutParams

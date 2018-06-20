@@ -20,5 +20,10 @@
     <string name="delete_unselected">Delete Unselected</string>
     <string name="settings">Settings</string>
     <string name="active_tags">Active Tags</string>
+    <string name="copy_tags">Copy tags</string>
     <string name="preference_shuffle_on_copy">Shuffle on copy</string>
+    <string name="preference_one_tag_per_line">One tag per line</string>
+    <string name="preference_dots_before_tags">Dots before tags</string>
+    <string name="preference_disable_space">Space between tags</string>
+
 </resources>
