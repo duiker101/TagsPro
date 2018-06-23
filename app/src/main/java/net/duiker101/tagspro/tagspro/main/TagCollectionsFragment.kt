@@ -1,4 +1,4 @@
-package net.duiker101.tagspro.tagspro
+package net.duiker101.tagspro.tagspro.main
 
 import android.content.Context
 import android.os.Bundle
@@ -8,8 +8,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
+import net.duiker101.tagspro.tagspro.MainActivity
+import net.duiker101.tagspro.tagspro.R
+import net.duiker101.tagspro.tagspro.tags.Tag
+import net.duiker101.tagspro.tagspro.tags.TagCollection
+import net.duiker101.tagspro.tagspro.tags.TagPersistance
 
 
 class TagCollectionsFragment : Fragment() {
@@ -79,36 +83,3 @@ class TagCollectionsFragment : Fragment() {
     }
 }
 
-class TagsAdapter(private val defaultMsg: String, private val listener: (tag: Tag) -> Unit) : RecyclerView.Adapter<TagsAdapter.ViewHolder>() {
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
-
-    var tags = ArrayList<Tag>()
-
-    companion object {
-        const val TYPE_DEFAULT = 0
-        const val TYPE_TAG = 1
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return if (viewType == TYPE_DEFAULT) {
-            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.listitem_default_text, parent, false))
-        } else
-            ViewHolder(TagView(parent.context, null, listener))
-    }
-
-    override fun getItemCount(): Int {
-        return if (tags.size == 0) 1 else tags.size
-    }
-
-
-    override fun getItemViewType(position: Int): Int {
-        return if (position == 0 && tags.size == 0) TYPE_DEFAULT else TYPE_TAG
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (holder.itemViewType == TYPE_TAG)
-            (holder.view as TagView).tag = tags[position]
-        else
-            (holder.view as TextView).text = defaultMsg
-    }
-}

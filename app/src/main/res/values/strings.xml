@@ -25,5 +25,8 @@
     <string name="preference_one_tag_per_line">One tag per line</string>
     <string name="preference_dots_before_tags">Dots before tags</string>
     <string name="preference_disable_space">Space between tags</string>
+    <string name="backup">Backup</string>
+    <string name="preference_export">Export</string>
+    <string name="preference_import">Import</string>
 
 </resources>

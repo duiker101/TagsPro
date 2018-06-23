@@ -8,9 +8,6 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        setContentView(R.layout.fragment_settings)
-//        setContentView(R.layout.activity_main)
-
         supportFragmentManager.beginTransaction()
                 .add(android.R.id.content, SettingsFragment())
                 .commit()
@@ -19,9 +16,6 @@ class SettingsActivity : AppCompatActivity() {
 
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-//        addPreferencesFromResource(R.xml.preferences)
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
-
-
 }

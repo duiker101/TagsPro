@@ -36,9 +36,9 @@ class EditCollectionActivity : AppCompatActivity() {
             }
         })
 
-        if (intent.hasExtra("tags")) {
+        if (intent.hasExtra("hashtags")) {
 
-            tags_text.setText(intent.getStringExtra("tags"))
+            tags_text.setText(intent.getStringExtra("hashtags"))
         }
 
         if (intent.hasExtra("title")) {
@@ -79,7 +79,7 @@ class EditCollectionActivity : AppCompatActivity() {
             if (intent.hasExtra("id")) {
                 resultIntent.putExtra("id", intent.getStringExtra("id"))
             }
-            resultIntent.putStringArrayListExtra("tags", result)
+            resultIntent.putStringArrayListExtra("hashtags", result)
             resultIntent.putExtra("title", title_text.text.toString())
             setResult(Activity.RESULT_OK, resultIntent)
 

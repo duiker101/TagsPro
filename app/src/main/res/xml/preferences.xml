@@ -5,20 +5,20 @@
     <PreferenceCategory android:title="@string/copy_tags">
 
         <SwitchPreference
-            android:key="shuffle_on_copy"
             android:defaultValue="false"
+            android:key="shuffle_on_copy"
             android:title="@string/preference_shuffle_on_copy" />
 
         <SwitchPreference
-            android:key="one_tag_per_line"
-            android:disableDependentsState="true"
             android:defaultValue="false"
+            android:disableDependentsState="true"
+            android:key="one_tag_per_line"
             android:title="@string/preference_one_tag_per_line" />
 
         <SwitchPreference
-            android:key="enable_space"
             android:defaultValue="true"
             android:dependency="one_tag_per_line"
+            android:key="enable_space"
             android:title="@string/preference_disable_space" />
 
         <SeekBarPreference
@@ -28,7 +28,13 @@
             android:title="@string/preference_dots_before_tags" />
 
         <!--TODO Highlight recently used?-->
+        <!--TODO export import??-->
 
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/backup">
+        <Preference android:title="@string/preference_import" />
+        <Preference android:title="@string/preference_export" />
     </PreferenceCategory>
 
 </PreferenceScreen>

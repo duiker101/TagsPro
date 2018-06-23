@@ -1,4 +1,4 @@
-package net.duiker101.tagspro.tagspro
+package net.duiker101.tagspro.tagspro.explore
 
 import android.support.v4.app.Fragment
 

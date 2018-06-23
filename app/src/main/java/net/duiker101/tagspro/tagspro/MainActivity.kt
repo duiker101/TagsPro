@@ -19,11 +19,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
+import android.widget.SearchView
 import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_active_tags_bar.*
+import net.duiker101.tagspro.tagspro.main.TagCollectionsFragment
+import net.duiker101.tagspro.tagspro.main.TagsAdapter
+import net.duiker101.tagspro.tagspro.search.SearchTagsFragment
+import net.duiker101.tagspro.tagspro.tags.Tag
+import net.duiker101.tagspro.tagspro.tags.TagCollection
+import net.duiker101.tagspro.tagspro.tags.TagPersistance
 import java.util.*
 
 
@@ -64,7 +71,42 @@ class MainActivity : AppCompatActivity() {
         mViewPager.adapter = mAdapter
         tabLayout.setupWithViewPager(mViewPager)
 
-        activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags), { tagModified(it) })
+        pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                if (position == 1) {
+                    search_text.visibility = View.VISIBLE
+                    search_text.isIconified = false
+                    search_text.requestFocus()
+                    search_text.requestFocusFromTouch()
+                } else {
+                    search_text.visibility = View.GONE
+                }
+            }
+        })
+
+//        search_text.setOnSearchClickListener { mAdapter.searchFragment.search(search_text.query.toString()) }
+        search_text.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if(query !=null){
+                    mAdapter.searchFragment.search(query)
+                    return true
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
+
+        activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags)) { tagModified(it) }
 
         val recycler = findViewById<RecyclerView>(R.id.selected_tags_recycler)
         val layoutManager = FlexboxLayoutManager(this)
@@ -102,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                 result.append("${it.name} ")
             }
 
-            intent.putExtra("tags", result.toString())
+            intent.putExtra("hashtags", result.toString())
 
             startActivityForResult(intent, REQUEST_CREATE_COLLECTION)
         }
@@ -110,7 +152,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && data != null) {
-            val tags = data.getStringArrayListExtra("tags")
+            val tags = data.getStringArrayListExtra("hashtags")
             val title = data.getStringExtra("title")
             if (requestCode == REQUEST_CREATE_COLLECTION) {
                 val collection = TagCollection(title, UUID.randomUUID().toString(), true)
@@ -169,7 +211,7 @@ class MainActivity : AppCompatActivity() {
                 result.append(it.name)
         }
 
-        val clip = ClipData.newPlainText("tags", result.toString())
+        val clip = ClipData.newPlainText("hashtags", result.toString())
         clipboard.primaryClip = clip
 
         val snack = Snackbar.make(bottomSheet, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
@@ -230,21 +272,22 @@ class MainActivity : AppCompatActivity() {
 
 class MainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     val collectionsFrag = TagCollectionsFragment()
-    val exploreTagsFragment = ExploreTagsFragment()
+    //    val exploreTagsFragment = ExploreTagsFragment()
+    val searchFragment = SearchTagsFragment()
 
     override fun getCount(): Int = 2
 
     override fun getItem(i: Int): Fragment {
         if (i == 0)
             return collectionsFrag
-        return exploreTagsFragment
+        return searchFragment
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         if (position == 0)
             return "My Tags"
         else if (position == 1)
-            return "Explore"
+            return "Search"
         return ""
     }
 }

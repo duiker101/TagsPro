@@ -1,6 +1,7 @@
-package net.duiker101.tagspro.tagspro
+package net.duiker101.tagspro.tagspro.tags
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -11,7 +12,7 @@ import java.io.FileOutputStream
 object TagPersistance {
     private fun getFile(context: Context): File {
         val path = context.filesDir
-        return File(path, "tags.json")
+        return File(path, "hashtags.json")
     }
 
     fun load(context: Context): ArrayList<TagCollection> {
@@ -20,6 +21,7 @@ object TagPersistance {
             return ArrayList()
 
         val input = FileInputStream(file).bufferedReader().use { it.readText() }
+        Log.w("Simone", input)
         val type = object : TypeToken<ArrayList<TagCollection>>() {}.type
         return Gson().fromJson(input, type)
     }
@@ -36,6 +38,6 @@ object TagPersistance {
 //object ExpansionPersistance{
 //    private fun getFile(context: Context): File {
 //        val path = context.filesDir
-//        return File(path, "tags.json")
+//        return File(path, "hashtags.json")
 //    }
 //}

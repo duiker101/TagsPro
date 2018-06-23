@@ -1,4 +1,4 @@
-package net.duiker101.tagspro.tagspro
+package net.duiker101.tagspro.tagspro.main
 
 
 import android.app.Activity
@@ -12,7 +12,12 @@ import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
+import net.duiker101.tagspro.tagspro.EditCollectionActivity
 import net.duiker101.tagspro.tagspro.MainActivity.Companion.REQUEST_EDIT_COLLECTION
+import net.duiker101.tagspro.tagspro.R
+import net.duiker101.tagspro.tagspro.tags.Tag
+import net.duiker101.tagspro.tagspro.tags.TagCollection
+import net.duiker101.tagspro.tagspro.tags.TagPersistance
 
 class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
                             private val listener: (tag: Tag) -> Unit,
@@ -30,7 +35,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
                      val adapter: TagsAdapter) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): TagCollectionsAdapter.ViewHolder {
+                                    viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.listitem_tag_collection, parent, false)
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerView)
         val layoutManager = FlexboxLayoutManager(parent.context)
@@ -127,7 +132,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
                 }
 //                if (it.itemId == R.id.action_delete_unselected) {
 //                    collections.filter { it.id == collection.id }.forEach {
-//                        it.tags.forEach {
+//                        it.hashtags.forEach {
 //                            it.active = false
 //                            listener(it)
 //                        }
@@ -145,7 +150,7 @@ class TagCollectionsAdapter(private val collections: ArrayList<TagCollection>,
                     val intent = Intent(context, EditCollectionActivity::class.java)
                     intent.putExtra("id", collection.id)
                     intent.putExtra("title", collection.name)
-                    intent.putExtra("tags", result.toString())
+                    intent.putExtra("hashtags", result.toString())
 
                     (context as Activity).startActivityForResult(intent, REQUEST_EDIT_COLLECTION)
                 }
