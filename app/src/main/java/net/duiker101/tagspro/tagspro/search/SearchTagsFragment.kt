@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.duiker101.tagspro.tagspro.R
+import net.duiker101.tagspro.tagspro.api.InstgramApi
+import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.main.TagCollectionsAdapter
-import net.duiker101.tagspro.tagspro.tags.InstgramApi
-import net.duiker101.tagspro.tagspro.tags.TagCollection
 
 
 class SearchTagsFragment : Fragment() {

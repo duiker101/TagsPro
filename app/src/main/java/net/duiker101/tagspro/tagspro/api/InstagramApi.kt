@@ -1,4 +1,4 @@
-package net.duiker101.tagspro.tagspro.tags
+package net.duiker101.tagspro.tagspro.api
 
 
 import io.reactivex.Observable

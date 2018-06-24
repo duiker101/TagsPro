@@ -1,5 +1,4 @@
 package net.duiker101.tagspro.tagspro
-
 import android.app.Activity
 import android.content.ClipData
 import android.content.Context
@@ -7,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -24,13 +22,13 @@ import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_active_tags_bar.*
+import kotlinx.android.synthetic.main.fragment_active_tags_bar.*
+import net.duiker101.tagspro.tagspro.api.Tag
+import net.duiker101.tagspro.tagspro.api.TagCollection
+import net.duiker101.tagspro.tagspro.api.TagPersistance
 import net.duiker101.tagspro.tagspro.main.TagCollectionsFragment
-import net.duiker101.tagspro.tagspro.main.TagsAdapter
 import net.duiker101.tagspro.tagspro.search.SearchTagsFragment
-import net.duiker101.tagspro.tagspro.tags.Tag
-import net.duiker101.tagspro.tagspro.tags.TagCollection
-import net.duiker101.tagspro.tagspro.tags.TagPersistance
+import net.duiker101.tagspro.tagspro.tags.TagsAdapter
 import java.util.*
 
 
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        val tabLayout: TabLayout = findViewById(R.id.tabs)
+//        val tabLayout: TabLayout = findViewById(R.id.tabs)
         tabLayout.addTab(tabLayout.newTab().setText("Tags"))
         tabLayout.addTab(tabLayout.newTab().setText("Explore"))
 
@@ -106,14 +104,13 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags)) { tagModified(it) }
+        activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags),activeTags) { tagModified(it) }
 
-        val recycler = findViewById<RecyclerView>(R.id.selected_tags_recycler)
+        val recycler = findViewById<RecyclerView>(R.id.recycler)
         val layoutManager = FlexboxLayoutManager(this)
         layoutManager.flexDirection = FlexDirection.ROW
         recycler.layoutManager = layoutManager
         recycler.adapter = activeTagsAdapter
-        activeTagsAdapter.tags = activeTags
         bottomSheet = findViewById<View>(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
@@ -157,7 +154,8 @@ class MainActivity : AppCompatActivity() {
             if (requestCode == REQUEST_CREATE_COLLECTION) {
                 val collection = TagCollection(title, UUID.randomUUID().toString(), true)
                 tags.forEach { collection.tags.add(Tag(it, false)) }
-                mAdapter.collectionsFrag.addCollection(collection)
+                // TODO
+//                mAdapter.collectionsFrag.addCollection(collection)
 
                 TagPersistance.save(this, mAdapter.collectionsFrag.collections)
             }
@@ -174,7 +172,8 @@ class MainActivity : AppCompatActivity() {
 
                 tags.forEach { collection.tags.add(Tag(it, false)) }
                 TagPersistance.save(this, mAdapter.collectionsFrag.collections)
-                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
+                // TODO
+//                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
 
 //                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
@@ -243,7 +242,8 @@ class MainActivity : AppCompatActivity() {
         }
         activeTagsText.text = getString(R.string.active_tags_count, activeTags.size)
         activeTagsAdapter.notifyDataSetChanged()
-        mAdapter.collectionsFrag.tagModified(tag, false)
+        // TODO
+//        mAdapter.collectionsFrag.tagModified(tag, false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
