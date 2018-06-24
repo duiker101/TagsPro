@@ -14,7 +14,6 @@ class TagsAdapter(
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
-
     companion object {
         const val TYPE_DEFAULT = 0
         const val TYPE_TAG = 1
@@ -36,7 +35,7 @@ class TagsAdapter(
 
 
     override fun getItemViewType(position: Int): Int {
-        return 0
+        return 3
 //        return if (position == 0 && tags.size == 0) TYPE_DEFAULT else TYPE_TAG
     }
 

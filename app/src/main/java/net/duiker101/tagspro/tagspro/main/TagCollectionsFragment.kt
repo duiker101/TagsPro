@@ -47,7 +47,7 @@ class TagCollectionsFragment : Fragment() {
 
 //        adapter = TagCollectionsAdapter(collections, { tagModified(it, false) }, { adapter.notifyDataSetChanged() })
 //        adapter = NewTagCollectionsAdapter(collections)
-        adapter = TagCollectionsAdapter(collections, { tagModified(it, false) }, { })
+        adapter = TagCollectionsAdapter(context!!,collections, { tagModified(it, false) }, { })
 //        adapter = TagCollectionsAdapter(collections,{},{})
 
 //        recycler.apply {
