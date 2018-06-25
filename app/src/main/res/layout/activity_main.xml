@@ -64,7 +64,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <fragment
-        android:id="@+id/activeTagsPanel"
+        android:id="@+id/activeTagsFragment"
         android:name="net.duiker101.tagspro.tagspro.ActiveTagsPanelFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

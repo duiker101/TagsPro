@@ -1,22 +1,17 @@
 package net.duiker101.tagspro.tagspro
 import android.app.Activity
-import android.content.ClipData
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageButton
 import android.widget.SearchView
 import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
@@ -35,11 +30,10 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: MainPagerAdapter
-    private lateinit var mViewPager: ViewPager
+    private lateinit var pager: ViewPager
     private val activeTags = ArrayList<Tag>()
     private lateinit var activeTagsAdapter: TagsAdapter
     private lateinit var activeTagsText: TextView
-    private lateinit var bottomSheet: View
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
     companion object {
@@ -53,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-//        val tabLayout: TabLayout = findViewById(R.id.tabs)
         tabLayout.addTab(tabLayout.newTab().setText("Tags"))
         tabLayout.addTab(tabLayout.newTab().setText("Explore"))
 
@@ -65,9 +58,8 @@ class MainActivity : AppCompatActivity() {
         activeTagsText.text = getString(R.string.active_tags_count, 0)
 
         mAdapter = MainPagerAdapter(supportFragmentManager)
-        mViewPager = findViewById(R.id.pager)
-        mViewPager.adapter = mAdapter
-        tabLayout.setupWithViewPager(mViewPager)
+        pager.adapter = mAdapter
+        tabLayout.setupWithViewPager(pager)
 
         pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -88,7 +80,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-//        search_text.setOnSearchClickListener { mAdapter.searchFragment.search(search_text.query.toString()) }
         search_text.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if(query !=null){
@@ -104,47 +95,14 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags),activeTags) { tagModified(it) }
+        activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags),activeTags)
 
         val recycler = findViewById<RecyclerView>(R.id.recycler)
         val layoutManager = FlexboxLayoutManager(this)
         layoutManager.flexDirection = FlexDirection.ROW
         recycler.layoutManager = layoutManager
         recycler.adapter = activeTagsAdapter
-        bottomSheet = findViewById<View>(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
-        findViewById<ImageButton>(R.id.action_copy).setOnClickListener {
-            copyActiveTags()
-        }
-
-        // TODO save as new collection button
-
-        findViewById<ImageButton>(R.id.action_shuffle).setOnClickListener {
-            activeTags.shuffle()
-            activeTagsAdapter.notifyDataSetChanged()
-        }
-
-        findViewById<ImageButton>(R.id.action_deselect).setOnClickListener {
-            ArrayList(activeTags).forEach {
-                it.active = false
-                tagModified(it)
-            }
-            activeTagsAdapter.notifyDataSetChanged()
-        }
-
-        action_save.setOnClickListener {
-            val intent = Intent(this, EditCollectionActivity::class.java)
-
-            val result = StringBuilder()
-            activeTags.forEach {
-                result.append("${it.name} ")
-            }
-
-            intent.putExtra("hashtags", result.toString())
-
-            startActivityForResult(intent, REQUEST_CREATE_COLLECTION)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -180,53 +138,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun copyActiveTags() {
-        if (activeTags.size == 0) {
-            Snackbar.make(bottomSheet, getString(R.string.no_tags_selected), Snackbar.LENGTH_SHORT).show()
-            return
-        }
-
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-        val copy = ArrayList<Tag>(activeTags)
-        val result = StringBuilder()
-
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (preferences.getBoolean("shuffle_on_copy", false))
-            copy.shuffle()
-
-        val dots = preferences.getInt("dots_before_tags", 0)
-        for (x in 0..(dots - 1))
-            result.appendln(".")
-
-        val onePerLine = preferences.getBoolean("one_tag_per_line", false)
-        val spaceBetween = preferences.getBoolean("enable_space", true)
-
-        copy.forEach {
-            if (onePerLine)
-                result.appendln(it.name)
-            else if (spaceBetween)
-                result.append("${it.name} ")
-            else
-                result.append(it.name)
-        }
-
-        val clip = ClipData.newPlainText("hashtags", result.toString())
-        clipboard.primaryClip = clip
-
-        val snack = Snackbar.make(bottomSheet, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
-        snack.setAction(R.string.open_instagram) {
-            val launchIntent = packageManager.getLaunchIntentForPackage("com.instagram.android")
-            if (launchIntent != null) {
-                startActivity(launchIntent)//null pointer check in case package name was not found
-            }
-        }
-        // to have the snackbar on top
-//            val view = snack.view
-//            val params = view.layoutParams as FrameLayout.LayoutParams
-//            params.gravity = Gravity.TOP
-//            view.layoutParams = params
-        snack.show()
-    }
 
     fun tagModified(tag: Tag) {
         if (tag.active) {
@@ -243,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         activeTagsText.text = getString(R.string.active_tags_count, activeTags.size)
         activeTagsAdapter.notifyDataSetChanged()
         // TODO
-//        mAdapter.collectionsFrag.tagModified(tag, false)
+//        mAdapter.collectionsFrag.updateTag(tag, false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
