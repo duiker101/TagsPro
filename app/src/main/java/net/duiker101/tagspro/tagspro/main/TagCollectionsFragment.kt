@@ -34,7 +34,7 @@ class TagCollectionsFragment : Fragment() {
 
 //        collections.addAll(TagPersistance.load(activity as Context))
         for (i in 0..50) {
-            with(TagCollection("test$i", "$i", true)) {
+            with(TagCollection("test$i", "$i")) {
                 for (j in 0..50) {
                     val t = Tag("tag $j")
                     t.media_count = i

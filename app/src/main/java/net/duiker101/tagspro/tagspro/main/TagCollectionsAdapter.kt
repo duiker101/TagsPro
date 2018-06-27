@@ -13,8 +13,9 @@ import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.tags.TagsAdapter
 
-class TagCollectionsAdapter(context: Context, private val collections: ArrayList<TagCollection>)
-    : RecyclerView.Adapter<CollectionHolder>() {
+class TagCollectionsAdapter(
+        context: Context, private val collections: ArrayList<TagCollection>
+) : RecyclerView.Adapter<CollectionHolder>() {
 
     private val viewPool = RecyclerView.RecycledViewPool()
 

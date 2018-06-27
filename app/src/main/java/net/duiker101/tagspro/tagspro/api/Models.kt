@@ -2,7 +2,7 @@ package net.duiker101.tagspro.tagspro.api
 
 
 // TODO color?
-data class TagCollection(var name: String = "New collection", var id: String = "", var expanded: Boolean) {
+data class TagCollection(var name: String = "New collection", var id: String = "") {
     var tags = ArrayList<Tag>()
 }
 

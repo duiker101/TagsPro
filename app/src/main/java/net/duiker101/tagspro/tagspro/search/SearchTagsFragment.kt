@@ -44,7 +44,7 @@ class SearchTagsFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     collections.clear()
-                    var collection = TagCollection("Tags 1", "", true)
+                    var collection = TagCollection("Tags 1", "")
                     var i = 1
                     var count = 1
 
@@ -52,7 +52,7 @@ class SearchTagsFragment : Fragment() {
                     it.hashtags.forEach {
                         if (i % 10 == 0) {
                             collections.add(collection)
-                            collection = TagCollection("Tags $count", "", true)
+                            collection = TagCollection("Tags $count", "")
                             count++
                         }
 

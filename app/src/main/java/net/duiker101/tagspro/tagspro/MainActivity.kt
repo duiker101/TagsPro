@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             val tags = data.getStringArrayListExtra("hashtags")
             val title = data.getStringExtra("title")
             if (requestCode == REQUEST_CREATE_COLLECTION) {
-                val collection = TagCollection(title, UUID.randomUUID().toString(), true)
+                val collection = TagCollection(title, UUID.randomUUID().toString())
                 tags.forEach { collection.tags.add(Tag(it, false)) }
                 // TODO
 //                mAdapter.collectionsFrag.addCollection(collection)

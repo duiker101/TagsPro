@@ -3,21 +3,21 @@ package net.duiker101.tagspro.tagspro.main
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.content_tag_collection.view.*
+import net.duiker101.tagspro.tagspro.api.ExpansionPersistance
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.events.TagEvent
 import net.duiker101.tagspro.tagspro.tags.TagsAdapter
 import org.greenrobot.eventbus.EventBus
 
 class CollectionHolder(val view: View) : RecyclerView.ViewHolder(view) {
-    fun bind(collection: TagCollection, position:Int, adapter:TagCollectionsAdapter) {
+    fun bind(collection: TagCollection, position: Int, adapter: TagCollectionsAdapter) {
         val tags = collection.tags
 
         view.recycler.swapAdapter(TagsAdapter("", tags), true)
 
         view.title_text.text = collection.name
 
-        // TODO clone collectino button
-
+        // TODO clone collection button
         if (tags.size == 0) {
             view.action_select.visibility = View.GONE
             view.action_deselect.visibility = View.GONE
@@ -39,28 +39,25 @@ class CollectionHolder(val view: View) : RecyclerView.ViewHolder(view) {
                 EventBus.getDefault().post(TagEvent(it))
             }
         }
-//
+
         view.action_deselect.setOnClickListener {
             tags.forEach {
                 it.active = false
                 EventBus.getDefault().post(TagEvent(it))
             }
         }
-//
-//
-        if (collection.expanded)
+
+        val expanded = ExpansionPersistance.isExpanded(view.context, collection.id)
+        if (expanded)
             view.recycler.visibility = View.VISIBLE
         else
             view.recycler.visibility = View.GONE
 //
         view.action_toggle_expand.setOnClickListener {
-            collection.expanded = !collection.expanded
+            ExpansionPersistance.setExpansion(view.context, collection.id, !expanded)
+//            collection.expanded = !collection.expanded
 //            TagPersistance.save(view.context, collections)
             adapter.notifyItemChanged(position, collection)
-//            if (holder.recycler.visibility == View.VISIBLE)
-//                holder.recycler.visibility = View.GONE
-//            else
-//                holder.recycler.visibility = View.VISIBLE
         }
 //
 //        val context = holder.view.context
