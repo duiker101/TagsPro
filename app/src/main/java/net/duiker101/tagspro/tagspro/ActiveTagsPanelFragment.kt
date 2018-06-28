@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.preference.PreferenceManager
@@ -40,7 +41,7 @@ class ActiveTagsPanelFragment : Fragment() {
         layoutManager.flexDirection = FlexDirection.ROW
         recycler.layoutManager = layoutManager
         recycler.adapter = activeTagsAdapter
-//
+
         action_copy.setOnClickListener {
             copyActiveTags()
         }
@@ -70,6 +71,8 @@ class ActiveTagsPanelFragment : Fragment() {
 
             startActivityForResult(intent, REQUEST_CREATE_COLLECTION)
         }
+
+        active_tags_text.text = getString(R.string.active_tags_count, activeTags.size)
     }
 
     override fun onStart() {
@@ -86,10 +89,16 @@ class ActiveTagsPanelFragment : Fragment() {
     fun OnMessageEvent(event: TagEvent) {
         val tag = event.tag
         if (tag.active) {
-            activeTags.add(tag)
+            if (activeTags.count { it.name == tag.name } == 0) {
+                if (activeTags.size == 0)
+                    (activity as NewMainActivity).setBottomBarState(BottomSheetBehavior.STATE_EXPANDED)
+                activeTags.add(tag)
+            }
         } else {
             activeTags.removeAll { it.name == tag.name }
         }
+
+        active_tags_text.text = getString(R.string.active_tags_count, activeTags.size)
         activeTagsAdapter.notifyDataSetChanged()
     }
 

@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(Intent(this, EditCollectionActivity::class.java), REQUEST_CREATE_COLLECTION)
         }
 
-        activeTagsText = findViewById(R.id.active_tags_text)
-        activeTagsText.text = getString(R.string.active_tags_count, 0)
+//        activeTagsText = findViewById(R.id.active_tags_text)
+//        activeTagsText.text = getString(R.string.active_tags_count, 0)
 
         mAdapter = MainPagerAdapter(supportFragmentManager)
         pager.adapter = mAdapter

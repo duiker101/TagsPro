@@ -1,5 +1,6 @@
 package net.duiker101.tagspro.tagspro.main
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
+import net.duiker101.tagspro.tagspro.api.TagPersistance
 import net.duiker101.tagspro.tagspro.events.TagEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -32,17 +34,17 @@ class TagCollectionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        collections.addAll(TagPersistance.load(activity as Context))
-        for (i in 0..50) {
-            with(TagCollection("test$i", "$i")) {
-                for (j in 0..50) {
-                    val t = Tag("tag $j")
-                    t.media_count = i
-                    this.tags.add(t)
-                }
-                collections.add(this)
-            }
-        }
+        collections.addAll(TagPersistance.load(activity as Context))
+//        for (i in 0..50) {
+//            with(TagCollection("test$i", "$i")) {
+//                for (j in 0..50) {
+//                    val t = Tag("tag $j")
+//                    t.media_count = i
+//                    this.tags.add(t)
+//                }
+//                collections.add(this)
+//            }
+//        }
 
         viewManager = LinearLayoutManager(activity)
         viewManager.recycleChildrenOnDetach = true
@@ -93,10 +95,10 @@ class TagCollectionsFragment : Fragment() {
         }
     }
 
-//    fun addCollection(collection: TagCollection) {
-//        collections.add(collection)
-////        adapter.notifyItemInserted(collections.size - 1)
+    fun addCollection(collection: TagCollection) {
+        collections.add(collection)
+        adapter.notifyItemInserted(collections.size - 1)
 //        adapter.notifyDataSetChanged()
-//    }
+    }
 }
 

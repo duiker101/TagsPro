@@ -33,8 +33,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/backup">
-        <Preference android:title="@string/preference_import" />
-        <Preference android:title="@string/preference_export" />
+        <Preference
+            android:key="preference_import"
+            android:title="@string/preference_import" />
+        <Preference
+            android:key="preference_export"
+            android:title="@string/preference_export" />
     </PreferenceCategory>
 
 </PreferenceScreen>

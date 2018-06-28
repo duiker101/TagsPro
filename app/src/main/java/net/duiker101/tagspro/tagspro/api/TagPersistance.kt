@@ -9,7 +9,7 @@ import java.io.FileOutputStream
 
 
 object TagPersistance {
-    private fun getFile(context: Context): File {
+    fun getFile(context: Context): File {
         val path = context.filesDir
         return File(path, "hashtags.json")
     }
