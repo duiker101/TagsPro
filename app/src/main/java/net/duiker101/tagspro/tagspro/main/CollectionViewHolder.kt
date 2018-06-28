@@ -1,10 +1,17 @@
 package net.duiker101.tagspro.tagspro.main
 
+import android.app.Activity
+import android.content.Intent
+import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.content_tag_collection.view.*
+import net.duiker101.tagspro.tagspro.EditCollectionActivity
+import net.duiker101.tagspro.tagspro.NewMainActivity.Companion.REQUEST_EDIT_COLLECTION
+import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.ExpansionPersistance
 import net.duiker101.tagspro.tagspro.api.TagCollection
+import net.duiker101.tagspro.tagspro.api.TagPersistance
 import net.duiker101.tagspro.tagspro.events.TagEvent
 import net.duiker101.tagspro.tagspro.tags.TagsAdapter
 import org.greenrobot.eventbus.EventBus
@@ -60,51 +67,50 @@ class CollectionHolder(val view: View) : RecyclerView.ViewHolder(view) {
             adapter.notifyItemChanged(position, collection)
         }
 //
-//        val context = holder.view.context
-//        holder.overflow.setOnClickListener {
-//            val popup = PopupMenu(context, holder.overflow)
-//
-//            popup.menuInflater.inflate(R.menu.menu_collection, popup.menu)
-//            popup.setOnMenuItemClickListener {
-//                if (it.itemId == R.id.action_delete) {
+        view.action_overflow.setOnClickListener {
+            val popup = PopupMenu(view.context, view.action_overflow)
+
+            popup.menuInflater.inflate(R.menu.menu_collection, popup.menu)
+            popup.setOnMenuItemClickListener {
+                if (it.itemId == R.id.action_delete) {
+                    adapter.collections.filter { it.id == collection.id }.forEach {
+                        it.tags.forEach {
+                            it.active = false
+                        }
+                    }
+
+                    adapter.collections.removeAll { it.id == collection.id }
+                    TagPersistance.save(view.context, adapter.collections)
+                    adapter.notifyDataSetChanged()
+                }
+//                if (it.itemId == R.id.action_delete_unselected) {
 //                    collections.filter { it.id == collection.id }.forEach {
-//                        it.tags.forEach {
+//                        it.hashtags.forEach {
 //                            it.active = false
 //                            listener(it)
 //                        }
 //                    }
-//                    collections.removeAll { it.id == collection.id }
+////                    collections.removeAll { it.id == collection.id }
 //                    TagPersistance.save(context, collections)
-//                    notifyListener()
+////                    notifyListener()
 //                }
-////                if (it.itemId == R.id.action_delete_unselected) {
-////                    collections.filter { it.id == collection.id }.forEach {
-////                        it.hashtags.forEach {
-////                            it.active = false
-////                            listener(it)
-////                        }
-////                    }
-//////                    collections.removeAll { it.id == collection.id }
-////                    TagPersistance.save(context, collections)
-//////                    notifyListener()
-////                }
-//                if (it.itemId == R.id.action_edit) {
-//                    val result = StringBuilder()
-//                    tags.forEach {
-//                        result.append("${it.name} ")
-//                    }
-//
-//                    val intent = Intent(context, EditCollectionActivity::class.java)
-//                    intent.putExtra("id", collection.id)
-//                    intent.putExtra("title", collection.name)
-//                    intent.putExtra("hashtags", result.toString())
-//
-//                    (context as Activity).startActivityForResult(intent, REQUEST_EDIT_COLLECTION)
-//                }
-//                true
-//            }
-//
-//            popup.show()
-//        }
+                if (it.itemId == R.id.action_edit) {
+                    val result = StringBuilder()
+                    tags.forEach {
+                        result.append("${it.name} ")
+                    }
+
+                    val intent = Intent(view.context, EditCollectionActivity::class.java)
+                    intent.putExtra("id", collection.id)
+                    intent.putExtra("title", collection.name)
+                    intent.putExtra("hashtags", result.toString())
+
+                    (view.context as Activity).startActivityForResult(intent, REQUEST_EDIT_COLLECTION)
+                }
+                true
+            }
+
+            popup.show()
+        }
     }
 }

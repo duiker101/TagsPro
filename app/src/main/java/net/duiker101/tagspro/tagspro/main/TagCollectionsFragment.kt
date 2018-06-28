@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 
-class TagCollectionsFragment : Fragment() {
+open class TagCollectionsFragment : Fragment() {
 
     val collections = ArrayList<TagCollection>()
     lateinit var adapter: RecyclerView.Adapter<*>
@@ -34,7 +34,7 @@ class TagCollectionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collections.addAll(TagPersistance.load(activity as Context))
+        loadTags()
 //        for (i in 0..50) {
 //            with(TagCollection("test$i", "$i")) {
 //                for (j in 0..50) {
@@ -53,6 +53,10 @@ class TagCollectionsFragment : Fragment() {
 //        adapter = TagCollectionsAdapter(collections, { updateTag(it, false) }, { adapter.notifyDataSetChanged() })
         adapter = TagCollectionsAdapter(context!!, collections)
         recycler.adapter = adapter
+    }
+
+    open fun loadTags(){
+        collections.addAll(TagPersistance.load(activity as Context))
     }
 
     override fun onStart() {

@@ -9,14 +9,19 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_main.*
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.api.TagPersistance
+import net.duiker101.tagspro.tagspro.events.TagEvent
 import net.duiker101.tagspro.tagspro.main.TagCollectionsFragment
+import net.duiker101.tagspro.tagspro.search.SearchTagsFragment
+import org.greenrobot.eventbus.EventBus
 import java.util.*
 
 class NewMainActivity : AppCompatActivity() {
@@ -54,17 +59,34 @@ class NewMainActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                if (position == 1 && search_text.query.isEmpty()) {
+                if (position == 1) {
                     fab.visibility = View.GONE
                     search_text.visibility = View.VISIBLE
-                    search_text.isIconified = false
-                    search_text.requestFocus()
-                    search_text.requestFocusFromTouch()
+                    if (search_text.query.isEmpty()) {
+                        search_text.isIconified = false
+                        search_text.requestFocus()
+                        search_text.requestFocusFromTouch()
+                    }
                 } else {
                     search_text.visibility = View.GONE
                     fab.visibility = View.VISIBLE
                 }
             }
+        })
+
+        search_text.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    pagerAdapter.searchFragment.search(query)
+                    return true
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
         })
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_wrapper)
@@ -82,24 +104,25 @@ class NewMainActivity : AppCompatActivity() {
                 TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
             }
 
-//            if (requestCode == REQUEST_EDIT_COLLECTION) {
-//                // if we don't collapse here there can be some problem with the bar
-//                val id = data.getStringExtra("id")
-//                val collection = pagerAdapter.collectionsFragment.collections.first { it.id == id }
-//                collection.name = title
-//                collection.tags.forEach {
-//                    it.active = false
+            if (requestCode == REQUEST_EDIT_COLLECTION) {
+                // if we don't collapse here there can be some problem with the bar
+                val id = data.getStringExtra("id")
+                val collection = pagerAdapter.collectionsFragment.collections.first { it.id == id }
+                collection.name = title
+                collection.tags.forEach {
+                    it.active = false
+                    EventBus.getDefault().post(TagEvent(it))
 //                    tagModified(it)
-//                }
-//                collection.tags.clear()
-//
-//                tags.forEach { collection.tags.add(Tag(it, false)) }
-//                TagPersistance.save(this, mAdapter.collectionsFrag.collections)
-//                // TODO
-////                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
-//
-////                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-//            }
+                }
+                collection.tags.clear()
+
+                tags.forEach { collection.tags.add(Tag(it, false)) }
+                TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
+                // TODO
+//                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
+
+//                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
         }
     }
 
@@ -119,11 +142,17 @@ class NewMainActivity : AppCompatActivity() {
     fun setBottomBarState(state: Int) {
         bottomSheetBehavior.state = state
     }
+
+    fun dismissKeyboard() {
+
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(search_text.windowToken, 0)
+    }
 }
 
 class NewMainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     val collectionsFragment = TagCollectionsFragment()
-    val searchFragment = TagCollectionsFragment()
+    val searchFragment = SearchTagsFragment()
 
     override fun getCount(): Int = 2
 

@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.android.synthetic.main.fragment_active_tags_bar.*
-import net.duiker101.tagspro.tagspro.MainActivity.Companion.REQUEST_CREATE_COLLECTION
+import net.duiker101.tagspro.tagspro.NewMainActivity.Companion.REQUEST_CREATE_COLLECTION
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.events.TagEvent
 import net.duiker101.tagspro.tagspro.tags.TagsAdapter
@@ -69,7 +69,7 @@ class ActiveTagsPanelFragment : Fragment() {
 
             intent.putExtra("hashtags", result.toString())
 
-            startActivityForResult(intent, REQUEST_CREATE_COLLECTION)
+            activity?.startActivityForResult(intent, REQUEST_CREATE_COLLECTION)
         }
 
         active_tags_text.text = getString(R.string.active_tags_count, activeTags.size)

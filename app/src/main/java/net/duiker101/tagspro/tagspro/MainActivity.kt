@@ -12,15 +12,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
 import android.widget.TextView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_active_tags_bar.*
 import net.duiker101.tagspro.tagspro.api.Tag
-import net.duiker101.tagspro.tagspro.api.TagCollection
-import net.duiker101.tagspro.tagspro.api.TagPersistance
 import net.duiker101.tagspro.tagspro.main.TagCollectionsFragment
 import net.duiker101.tagspro.tagspro.search.SearchTagsFragment
 import net.duiker101.tagspro.tagspro.tags.TagsAdapter
@@ -36,10 +33,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activeTagsText: TextView
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
-    companion object {
-        const val REQUEST_CREATE_COLLECTION = 0
-        const val REQUEST_EDIT_COLLECTION = 1
-    }
+//    companion object {
+//        const val REQUEST_CREATE_COLLECTION = 0
+//        const val REQUEST_EDIT_COLLECTION = 1
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +46,10 @@ class MainActivity : AppCompatActivity() {
 
         tabLayout.addTab(tabLayout.newTab().setText("Tags"))
         tabLayout.addTab(tabLayout.newTab().setText("Explore"))
-
-        fab.setOnClickListener {
-            startActivityForResult(Intent(this, EditCollectionActivity::class.java), REQUEST_CREATE_COLLECTION)
-        }
+//
+//        fab.setOnClickListener {
+//            startActivityForResult(Intent(this, EditCollectionActivity::class.java), REQUEST_CREATE_COLLECTION)
+//        }
 
 //        activeTagsText = findViewById(R.id.active_tags_text)
 //        activeTagsText.text = getString(R.string.active_tags_count, 0)
@@ -80,20 +77,20 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        search_text.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if(query !=null){
-                    mAdapter.searchFragment.search(query)
-                    return true
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-
-        })
+//        search_text.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                if(query !=null){
+//                    mAdapter.searchFragment.search(query)
+//                    return true
+//                }
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                return false
+//            }
+//
+//        })
 
         activeTagsAdapter = TagsAdapter(getString(R.string.default_no_active_tags),activeTags)
 
@@ -109,32 +106,32 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && data != null) {
             val tags = data.getStringArrayListExtra("hashtags")
             val title = data.getStringExtra("title")
-            if (requestCode == REQUEST_CREATE_COLLECTION) {
-                val collection = TagCollection(title, UUID.randomUUID().toString())
-                tags.forEach { collection.tags.add(Tag(it, false)) }
-                // TODO
-//                mAdapter.collectionsFrag.addCollection(collection)
-
-                TagPersistance.save(this, mAdapter.collectionsFrag.collections)
-            }
-            if (requestCode == REQUEST_EDIT_COLLECTION) {
-                // if we don't collapse here there can be some problem with the bar
-                val id = data.getStringExtra("id")
-                val collection = mAdapter.collectionsFrag.collections.first { it.id == id }
-                collection.name = title
-                collection.tags.forEach {
-                    it.active = false
-                    tagModified(it)
-                }
-                collection.tags.clear()
-
-                tags.forEach { collection.tags.add(Tag(it, false)) }
-                TagPersistance.save(this, mAdapter.collectionsFrag.collections)
-                // TODO
-//                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
-
-//                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            }
+//            if (requestCode == REQUEST_CREATE_COLLECTION) {
+//                val collection = TagCollection(title, UUID.randomUUID().toString())
+//                tags.forEach { collection.tags.add(Tag(it, false)) }
+//                // TODO
+////                mAdapter.collectionsFrag.addCollection(collection)
+//
+//                TagPersistance.save(this, mAdapter.collectionsFrag.collections)
+//            }
+//            if (requestCode == REQUEST_EDIT_COLLECTION) {
+//                // if we don't collapse here there can be some problem with the bar
+//                val id = data.getStringExtra("id")
+//                val collection = mAdapter.collectionsFrag.collections.first { it.id == id }
+//                collection.name = title
+//                collection.tags.forEach {
+//                    it.active = false
+//                    tagModified(it)
+//                }
+//                collection.tags.clear()
+//
+//                tags.forEach { collection.tags.add(Tag(it, false)) }
+//                TagPersistance.save(this, mAdapter.collectionsFrag.collections)
+//                // TODO
+////                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
+//
+////                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+//            }
         }
     }
 

@@ -1,48 +1,41 @@
 package net.duiker101.tagspro.tagspro.search
 
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import net.duiker101.tagspro.tagspro.R
+import net.duiker101.tagspro.tagspro.NewMainActivity
 import net.duiker101.tagspro.tagspro.api.InstgramApi
 import net.duiker101.tagspro.tagspro.api.TagCollection
+import net.duiker101.tagspro.tagspro.main.TagCollectionsFragment
 
 
-class SearchTagsFragment : Fragment() {
-    private lateinit var recyclerView: RecyclerView
-    lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
-    private val collections = ArrayList<TagCollection>()
+class SearchTagsFragment : TagCollectionsFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val rootView: View = inflater.inflate(R.layout.fragment_search, container, false)
+//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+//        return inflater.inflate(R.layout.fragment_search, container, false)
+//    }
 
-
-        // not this line maybe
-//        collections.addAll(TagPersistance.load(activity as Context))
-
-//        viewManager = LinearLayoutManager(activity)
-//        viewAdapter = TagCollectionsAdapter(context!!,collections, { }, { viewAdapter.notifyDataSetChanged() })
-//        recyclerView = rootView.findViewById<RecyclerView>(R.id.my_recycler_view).apply {
-//            layoutManager = viewManager
-//            adapter = viewAdapter
-//        }
-
-        return rootView
+    override fun loadTags() {
     }
 
     fun search(text: String) {
+//        swipe_refresh.isRefreshing = true
         if (text.isEmpty() || text.length < 3)
             return
+
+//        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        imm.hideSoftInputFromWindow(search_text.windowToken, 0)
+//        search_text.isIconified = false
+//        search_text.clearFocus()
+        (activity as NewMainActivity).dismissKeyboard()
+
         val subscription = InstgramApi.search(text)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError {
+                    //                    swipe_refresh.isRefreshing = false
+                }
                 .subscribe {
+                    //                    swipe_refresh.isRefreshing = false
                     collections.clear()
                     var collection = TagCollection("Tags 1", "")
                     var i = 1
@@ -50,17 +43,18 @@ class SearchTagsFragment : Fragment() {
 
 
                     it.hashtags.forEach {
+                        it.hashtag.name = "#" + it.hashtag.name
+                        collection.tags.add(it.hashtag)
+                        i++
+
                         if (i % 10 == 0) {
                             collections.add(collection)
                             collection = TagCollection("Tags $count", "")
                             count++
                         }
-
-                        collection.tags.add(it.hashtag)
-                        i++
                     }
 
-                    viewAdapter.notifyDataSetChanged()
+                    adapter.notifyDataSetChanged()
                 }
     }
 }
