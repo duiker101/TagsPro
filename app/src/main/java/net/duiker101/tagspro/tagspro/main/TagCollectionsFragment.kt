@@ -62,9 +62,15 @@ open class TagCollectionsFragment : Fragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun OnMessageEvent(event: TagEvent) {
         val tag = event.tag
-        updateTag(tag)
+        updateCollectionsForTag(tag)
     }
 
+    /**
+     * Given a collection, set the status of the tags based on if they are in the activeTags
+     * This does not actually select/deselect them, just update their status
+     * This also does NOT update the adapter YET
+     * TODO update the adapter with a status flag added as parameter
+     */
     fun updateCollectionSelection(collection: TagCollection) {
         val activeTags = (activity as MainActivity).getActiveTags()
         val activeTagsMap = activeTags.map { it.name }
@@ -73,6 +79,11 @@ open class TagCollectionsFragment : Fragment() {
         }
     }
 
+    /**
+     * set the status of the all the tags in all collections based on if they are in the activeTags
+     * This does not actually select/deselect them, just update their status
+     * WARNING this might be slow to re-render because it calls notifyDataSetChanged
+     */
     fun updateCollectionsSelection() {
         val activeTags = (activity as MainActivity).getActiveTags()
         val activeTagsMap = activeTags.map { it.name }
@@ -81,10 +92,15 @@ open class TagCollectionsFragment : Fragment() {
                 it.active = activeTagsMap.contains(it.name)
             }
         }
+
         adapter.notifyDataSetChanged()
     }
 
-    fun updateTag(tag: Tag) {
+    /**
+     * This sets the status for all tags of the same tag passed as parameter
+     * This is useful because it updates just those adapters that have that specific tag
+     */
+    fun updateCollectionsForTag(tag: Tag) {
         var i = 0
         var toUpdate = false
         collections.forEachIndexed { ci, collection ->
@@ -98,16 +114,18 @@ open class TagCollectionsFragment : Fragment() {
                     else
                         toUpdate = true
                 }
-
-                if (toUpdate)
-                    adapter.notifyItemChanged(i, ci)
-
-                toUpdate = false
             }
+            if (toUpdate)
+                adapter.notifyItemChanged(i, ci)
+
+            toUpdate = false
             i++
         }
     }
 
+    /**
+     * Add a collection to the adapter
+     */
     fun addCollection(collection: TagCollection) {
         collections.add(collection)
         updateCollectionSelection(collection)

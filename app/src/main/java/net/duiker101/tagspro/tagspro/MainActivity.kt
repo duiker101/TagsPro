@@ -84,32 +84,15 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && data != null) {
             val tags = data.getStringArrayListExtra("hashtags")
             val title = data.getStringExtra("title")
-            if (requestCode == REQUEST_CREATE_COLLECTION) {
-                val collection = TagCollection(title, UUID.randomUUID().toString())
-                tags.forEach { collection.tags.add(Tag(it, false)) }
-                pagerAdapter.collectionsFragment.addCollection(collection)
 
-                TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
+            val id = data.getStringExtra("id")
+
+            if (requestCode == REQUEST_CREATE_COLLECTION) {
+                createCollection(title, tags)
             }
 
             if (requestCode == REQUEST_EDIT_COLLECTION) {
-                // if we don't collapse here there can be some problem with the bar
-                setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
-
-                val id = data.getStringExtra("id")
-                val collection = pagerAdapter.collectionsFragment.collections.first { it.id == id }
-                collection.name = title
-                collection.tags.forEach {
-                    it.active = false
-                    EventBus.getDefault().post(TagEvent(it))
-                }
-                collection.tags.clear()
-
-                tags.forEach { collection.tags.add(Tag(it, false)) }
-                TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
-
-//                pagerAdapter.collectionsFragment.adapter.notifyDataSetChanged()
-                pagerAdapter.collectionsFragment.updateCollectionsSelection()
+                editCollection(id, title, tags)
             }
         }
     }
@@ -125,6 +108,45 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    /**
+     * Create a collection in the persistance and notify the main collections fragment of it
+     */
+    private fun createCollection(title: String, tags: ArrayList<String>) {
+        val collection = TagCollection(title, UUID.randomUUID().toString())
+        tags.forEach { collection.tags.add(Tag(it, false)) }
+        pagerAdapter.collectionsFragment.addCollection(collection)
+
+        TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
+    }
+
+    /**
+     * update a collection in the persistance and notify the main collections frag that it changed
+     */
+    private fun editCollection(collectionId: String, title: String, tags: ArrayList<String>) {
+        // if we don't collapse here there can be some problem with the bar when we come from the other
+        // activity. Because the keyboard there will push the bar up
+        setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
+
+        // select the collection with this id
+        val collection = pagerAdapter.collectionsFragment.collections.first { it.id == collectionId }
+
+        collection.name = title
+
+        // TODO remove this?
+        // this part deselects all the tags in the collection, do we really want to to this?
+        collection.tags.forEach {
+            it.active = false
+            EventBus.getDefault().post(TagEvent(it))
+        }
+        collection.tags.clear()
+
+        // add all of them back, non-selected
+        tags.forEach { collection.tags.add(Tag(it, false)) }
+        TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
+
+        pagerAdapter.collectionsFragment.updateCollectionsSelection()
     }
 
     fun setBottomBarState(state: Int) {
