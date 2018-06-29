@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         pager.addOnPageChangeListener(BasePagerListener { position ->
             // if we select the search hide the fab and show the search
             if (position == 1) {
-                fab.visibility = View.GONE
+                setFabVisibility(View.GONE)
                 search_text.visibility = View.VISIBLE
                 if (search_text.query.isEmpty()) {
                     // if the search is empty we want to focus on it, this will bring up the keyboard
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 search_text.visibility = View.GONE
-                fab.visibility = View.VISIBLE
+                setFabVisibility(View.VISIBLE)
             }
         })
 
@@ -147,6 +147,14 @@ class MainActivity : AppCompatActivity() {
         TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
 
         pagerAdapter.collectionsFragment.updateCollectionsSelection()
+    }
+
+    fun setFabVisibility(visibility: Int) {
+        if (visibility == View.GONE && fab.visibility == View.VISIBLE) {
+            fab.hide()
+        } else if (visibility == View.VISIBLE && fab.visibility != View.VISIBLE) {
+            fab.show()
+        }
     }
 
     fun setBottomBarState(state: Int) {

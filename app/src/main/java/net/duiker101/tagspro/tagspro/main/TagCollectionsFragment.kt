@@ -43,6 +43,17 @@ open class TagCollectionsFragment : Fragment() {
 
         adapter = TagCollectionsAdapter(context!!, collections)
         recycler.adapter = adapter
+
+        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    (activity as MainActivity).setFabVisibility(View.GONE)
+                } else if (dy < 0) {
+                    (activity as MainActivity).setFabVisibility(View.VISIBLE)
+                }
+            }
+        })
     }
 
     open fun loadTags() {
