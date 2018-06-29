@@ -2,7 +2,7 @@ package net.duiker101.tagspro.tagspro.search
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import net.duiker101.tagspro.tagspro.NewMainActivity
+import net.duiker101.tagspro.tagspro.MainActivity
 import net.duiker101.tagspro.tagspro.api.InstgramApi
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.main.TagCollectionsFragment
@@ -25,7 +25,7 @@ class SearchTagsFragment : TagCollectionsFragment() {
         if (text.isEmpty() || text.length < 3)
             return
 
-        (activity as NewMainActivity).dismissKeyboard()
+        (activity as MainActivity).dismissKeyboard()
 
         val subscription = InstgramApi.search(text)
                 .subscribeOn(Schedulers.io())

@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.content_tag_collection.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
-import net.duiker101.tagspro.tagspro.NewMainActivity
+import net.duiker101.tagspro.tagspro.MainActivity
 import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
@@ -66,7 +66,7 @@ open class TagCollectionsFragment : Fragment() {
     }
 
     fun updateCollectionSelection(collection: TagCollection) {
-        val activeTags = (activity as NewMainActivity).getActiveTags()
+        val activeTags = (activity as MainActivity).getActiveTags()
         val activeTagsMap = activeTags.map { it.name }
         collection.tags.forEach {
             it.active = activeTagsMap.contains(it.name)
@@ -74,7 +74,7 @@ open class TagCollectionsFragment : Fragment() {
     }
 
     fun updateCollectionsSelection() {
-        val activeTags = (activity as NewMainActivity).getActiveTags()
+        val activeTags = (activity as MainActivity).getActiveTags()
         val activeTagsMap = activeTags.map { it.name }
         collections.forEach {
             it.tags.forEach {

@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.content_tag_collection.view.*
 import net.duiker101.tagspro.tagspro.EditCollectionActivity
-import net.duiker101.tagspro.tagspro.NewMainActivity.Companion.REQUEST_EDIT_COLLECTION
+import net.duiker101.tagspro.tagspro.MainActivity.Companion.REQUEST_EDIT_COLLECTION
 import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.ExpansionPersistance
 import net.duiker101.tagspro.tagspro.api.TagCollection

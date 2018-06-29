@@ -24,7 +24,7 @@ import net.duiker101.tagspro.tagspro.search.SearchTagsFragment
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
-class NewMainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var pagerAdapter: NewMainPagerAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>

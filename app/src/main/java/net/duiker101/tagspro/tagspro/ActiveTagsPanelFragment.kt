@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.android.synthetic.main.fragment_active_tags_bar.*
-import net.duiker101.tagspro.tagspro.NewMainActivity.Companion.REQUEST_CREATE_COLLECTION
+import net.duiker101.tagspro.tagspro.MainActivity.Companion.REQUEST_CREATE_COLLECTION
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.events.TagEvent
 import net.duiker101.tagspro.tagspro.tags.TagsAdapter
@@ -91,7 +91,7 @@ class ActiveTagsPanelFragment : Fragment() {
         if (tag.active) {
             if (activeTags.count { it.name == tag.name } == 0) {
                 if (activeTags.size == 0)
-                    (activity as NewMainActivity).setBottomBarState(BottomSheetBehavior.STATE_EXPANDED)
+                    (activity as MainActivity).setBottomBarState(BottomSheetBehavior.STATE_EXPANDED)
                 activeTags.add(tag)
             }
         } else {
