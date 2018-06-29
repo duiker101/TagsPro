@@ -25,8 +25,8 @@ import org.greenrobot.eventbus.ThreadMode
 
 class ActiveTagsPanelFragment : Fragment() {
 
+    val activeTags = ArrayList<Tag>()
     private lateinit var activeTagsAdapter: TagsAdapter
-    private val activeTags = ArrayList<Tag>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_active_tags_bar, container, false)

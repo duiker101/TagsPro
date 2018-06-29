@@ -10,22 +10,21 @@ import net.duiker101.tagspro.tagspro.main.TagCollectionsFragment
 
 class SearchTagsFragment : TagCollectionsFragment() {
 
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-//        return inflater.inflate(R.layout.fragment_search, container, false)
-//    }
-
+    /**
+     * We override this to stop the saved tags from loading
+     */
     override fun loadTags() {
     }
 
+    /**
+     * handle the search from the SearchView in the toolbar of the MainActivity
+     *
+     */
     fun search(text: String) {
 //        swipe_refresh.isRefreshing = true
         if (text.isEmpty() || text.length < 3)
             return
 
-//        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//        imm.hideSoftInputFromWindow(search_text.windowToken, 0)
-//        search_text.isIconified = false
-//        search_text.clearFocus()
         (activity as NewMainActivity).dismissKeyboard()
 
         val subscription = InstgramApi.search(text)
@@ -54,7 +53,7 @@ class SearchTagsFragment : TagCollectionsFragment() {
                         }
                     }
 
-                    adapter.notifyDataSetChanged()
+                    updateCollectionsSelection()
                 }
     }
 }

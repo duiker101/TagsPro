@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.content_tag_collection.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import net.duiker101.tagspro.tagspro.NewMainActivity
 import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
@@ -35,27 +36,16 @@ open class TagCollectionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadTags()
-//        for (i in 0..50) {
-//            with(TagCollection("test$i", "$i")) {
-//                for (j in 0..50) {
-//                    val t = Tag("tag $j")
-//                    t.media_count = i
-//                    this.tags.add(t)
-//                }
-//                collections.add(this)
-//            }
-//        }
 
         viewManager = LinearLayoutManager(activity)
         viewManager.recycleChildrenOnDetach = true
         recycler.layoutManager = viewManager
 
-//        adapter = TagCollectionsAdapter(collections, { updateTag(it, false) }, { adapter.notifyDataSetChanged() })
         adapter = TagCollectionsAdapter(context!!, collections)
         recycler.adapter = adapter
     }
 
-    open fun loadTags(){
+    open fun loadTags() {
         collections.addAll(TagPersistance.load(activity as Context))
     }
 
@@ -72,10 +62,29 @@ open class TagCollectionsFragment : Fragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun OnMessageEvent(event: TagEvent) {
         val tag = event.tag
-        updateTag(tag, false)
+        updateTag(tag)
     }
 
-    fun updateTag(tag: Tag, notify: Boolean) {
+    fun updateCollectionSelection(collection: TagCollection) {
+        val activeTags = (activity as NewMainActivity).getActiveTags()
+        val activeTagsMap = activeTags.map { it.name }
+        collection.tags.forEach {
+            it.active = activeTagsMap.contains(it.name)
+        }
+    }
+
+    fun updateCollectionsSelection() {
+        val activeTags = (activity as NewMainActivity).getActiveTags()
+        val activeTagsMap = activeTags.map { it.name }
+        collections.forEach {
+            it.tags.forEach {
+                it.active = activeTagsMap.contains(it.name)
+            }
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    fun updateTag(tag: Tag) {
         var i = 0
         var toUpdate = false
         collections.forEachIndexed { ci, collection ->
@@ -101,8 +110,8 @@ open class TagCollectionsFragment : Fragment() {
 
     fun addCollection(collection: TagCollection) {
         collections.add(collection)
+        updateCollectionSelection(collection)
         adapter.notifyItemInserted(collections.size - 1)
-//        adapter.notifyDataSetChanged()
     }
 }
 

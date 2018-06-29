@@ -22,7 +22,6 @@ class SettingsActivity : AppCompatActivity() {
     companion object {
         const val WRITE_REQUEST_CODE = 43
         const val WRITE_PERMISSION_REQUEST_CODE = 44
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

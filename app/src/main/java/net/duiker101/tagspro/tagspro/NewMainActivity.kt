@@ -121,7 +121,8 @@ class NewMainActivity : AppCompatActivity() {
                 tags.forEach { collection.tags.add(Tag(it, false)) }
                 TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
 
-                pagerAdapter.collectionsFragment.adapter.notifyDataSetChanged()
+//                pagerAdapter.collectionsFragment.adapter.notifyDataSetChanged()
+                pagerAdapter.collectionsFragment.updateCollectionsSelection()
             }
         }
     }
@@ -147,6 +148,10 @@ class NewMainActivity : AppCompatActivity() {
 
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(search_text.windowToken, 0)
+    }
+
+    fun getActiveTags(): ArrayList<Tag> {
+        return (activeTagsFragment as ActiveTagsPanelFragment).activeTags
     }
 }
 
