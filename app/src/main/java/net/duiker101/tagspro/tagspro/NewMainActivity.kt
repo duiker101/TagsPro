@@ -66,6 +66,7 @@ class NewMainActivity : AppCompatActivity() {
                         search_text.isIconified = false
                         search_text.requestFocus()
                         search_text.requestFocusFromTouch()
+                        setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
                     }
                 } else {
                     search_text.visibility = View.GONE
@@ -106,22 +107,21 @@ class NewMainActivity : AppCompatActivity() {
 
             if (requestCode == REQUEST_EDIT_COLLECTION) {
                 // if we don't collapse here there can be some problem with the bar
+                setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
+
                 val id = data.getStringExtra("id")
                 val collection = pagerAdapter.collectionsFragment.collections.first { it.id == id }
                 collection.name = title
                 collection.tags.forEach {
                     it.active = false
                     EventBus.getDefault().post(TagEvent(it))
-//                    tagModified(it)
                 }
                 collection.tags.clear()
 
                 tags.forEach { collection.tags.add(Tag(it, false)) }
                 TagPersistance.save(this, pagerAdapter.collectionsFragment.collections)
-                // TODO
-//                mAdapter.collectionsFrag.viewAdapter.notifyDataSetChanged()
 
-//                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                pagerAdapter.collectionsFragment.adapter.notifyDataSetChanged()
             }
         }
     }

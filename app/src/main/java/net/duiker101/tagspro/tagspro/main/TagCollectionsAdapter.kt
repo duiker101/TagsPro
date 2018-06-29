@@ -21,7 +21,6 @@ class TagCollectionsAdapter(
 
     init {
         viewPool.setMaxRecycledViews(3, 300)
-        viewPool.setMaxRecycledViews(3, 300)
 
         val tagsAdapter = TagsAdapter("", ArrayList())
         val view = LinearLayout(context)
