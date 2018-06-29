@@ -8,6 +8,10 @@ import android.widget.TextView
 import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.Tag
 
+/**
+ * Adapter TagsView to display a collection of tags
+ * if the data is empty we show a TextView that shows the defaultMsg member
+ */
 class TagsAdapter(
         private val defaultMsg: String,
         val tags: ArrayList<Tag>
@@ -15,6 +19,9 @@ class TagsAdapter(
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
+    /**
+     * constants for the type of views to display
+     */
     companion object {
         const val TYPE_DEFAULT = 234
         const val TYPE_TAG = 235
