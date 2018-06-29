@@ -7,9 +7,7 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,11 +22,17 @@ import net.duiker101.tagspro.tagspro.search.SearchTagsFragment
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
+/**
+ * Entry point of the app
+ */
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var pagerAdapter: NewMainPagerAdapter
+    private lateinit var pagerAdapter: MainPagerAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
+    /**
+     * Constants for invoking the edit tags screen
+     */
     companion object {
         const val REQUEST_CREATE_COLLECTION = 0
         const val REQUEST_EDIT_COLLECTION = 1
@@ -48,46 +52,29 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(Intent(this, EditCollectionActivity::class.java), REQUEST_CREATE_COLLECTION)
         }
 
-        pagerAdapter = NewMainPagerAdapter(supportFragmentManager)
+        pagerAdapter = MainPagerAdapter(supportFragmentManager)
         pager.adapter = pagerAdapter
-
-        pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                if (position == 1) {
-                    fab.visibility = View.GONE
-                    search_text.visibility = View.VISIBLE
-                    if (search_text.query.isEmpty()) {
-                        search_text.isIconified = false
-                        search_text.requestFocus()
-                        search_text.requestFocusFromTouch()
-                        setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
-                    }
-                } else {
-                    search_text.visibility = View.GONE
-                    fab.visibility = View.VISIBLE
+        pager.addOnPageChangeListener(BasePagerListener { position ->
+            // if we select the search hide the fab and show the search
+            if (position == 1) {
+                fab.visibility = View.GONE
+                search_text.visibility = View.VISIBLE
+                if (search_text.query.isEmpty()) {
+                    // if the search is empty we want to focus on it, this will bring up the keyboard
+                    // so just reduce the activeTagsBar to not clutter the screen
+                    search_text.isIconified = false
+                    search_text.requestFocus()
+                    search_text.requestFocusFromTouch()
+                    setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
                 }
+            } else {
+                search_text.visibility = View.GONE
+                fab.visibility = View.VISIBLE
             }
         })
 
-        search_text.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
-                    pagerAdapter.searchFragment.search(query)
-                    return true
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-
+        search_text.setOnQueryTextListener(BaseQueryListener {
+            pagerAdapter.searchFragment.search(it)
         })
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_wrapper)
@@ -155,7 +142,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class NewMainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+class MainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     val collectionsFragment = TagCollectionsFragment()
     val searchFragment = SearchTagsFragment()
 
