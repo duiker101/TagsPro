@@ -15,6 +15,7 @@ import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.api.TagPersistance
+import net.duiker101.tagspro.tagspro.events.ReloadEvent
 import net.duiker101.tagspro.tagspro.events.TagEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -58,6 +59,7 @@ open class TagCollectionsFragment : Fragment() {
     }
 
     open fun loadTags() {
+        collections.clear()
         collections.addAll(TagPersistance.load(activity as Context))
     }
 
@@ -75,6 +77,12 @@ open class TagCollectionsFragment : Fragment() {
     fun OnMessageEvent(event: TagEvent) {
         val tag = event.tag
         updateCollectionsForTag(tag)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun OnMessageEvent(event: ReloadEvent) {
+        loadTags()
+        updateCollectionsSelection()
     }
 
     /**
