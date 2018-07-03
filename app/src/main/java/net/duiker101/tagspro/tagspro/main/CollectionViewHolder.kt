@@ -2,13 +2,20 @@ package net.duiker101.tagspro.tagspro.main
 
 import android.app.Activity
 import android.content.Intent
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
 import kotlinx.android.synthetic.main.content_tag_collection.view.*
 import net.duiker101.tagspro.tagspro.EditCollectionActivity
+import net.duiker101.tagspro.tagspro.MainActivity
 import net.duiker101.tagspro.tagspro.MainActivity.Companion.REQUEST_EDIT_COLLECTION
 import net.duiker101.tagspro.tagspro.R
+import net.duiker101.tagspro.tagspro.TagsText
 import net.duiker101.tagspro.tagspro.api.ExpansionPersistance
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.api.TagPersistance
@@ -52,6 +59,40 @@ class CollectionHolder(val view: View) : RecyclerView.ViewHolder(view) {
                 it.active = false
                 EventBus.getDefault().post(TagEvent(it))
             }
+        }
+
+        view.action_add.setOnClickListener {
+            //            tags.forEach {
+//                it.active = false
+//                EventBus.getDefault().post(TagEvent(it))
+//            }
+//            val t = EditText(view.context)
+            val builder = AlertDialog.Builder(view.context).create()
+            val alertView = LayoutInflater.from(view.context).inflate(R.layout.content_alert_quickadd, null)
+            val text = alertView.findViewById<EditText>(R.id.edit_text)
+            val tagsText = TagsText()
+            text.setText(tags.map { it.name }.joinToString(" ") )
+            tagsText.update(text.text.toString())
+
+            text.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    tagsText.update(s.toString())
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+            })
+            builder.setView(alertView)
+            builder.setTitle("Quick add tags")
+            builder.setButton(AlertDialog.BUTTON_POSITIVE, "Save") { dialog, which ->
+                (view.context as MainActivity).editCollection(collection.id, collection.name, tagsText.hashed())
+
+            }
+//            builder.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel") { _, _ -> }
+            builder.show()
         }
 
         val expanded = ExpansionPersistance.isExpanded(view.context, collection.id)

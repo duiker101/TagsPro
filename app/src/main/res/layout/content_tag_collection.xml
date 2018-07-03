@@ -11,9 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:text="Title"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:text="Title"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -39,34 +39,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_text" />
 
-    <ImageButton
-        android:id="@+id/action_select"
-        style="@style/CardFlatButton"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:tint="#aaa"
-        app:layout_constraintTop_toBottomOf="@id/recycler"
-        app:srcCompat="@drawable/ic_check_white_24dp" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/recycler">
 
-    <ImageButton
-        android:id="@+id/action_shuffle"
-        style="@style/CardFlatButton"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:tint="#aaa"
-        app:layout_constraintLeft_toRightOf="@id/action_select"
-        app:layout_constraintTop_toBottomOf="@id/recycler"
-        app:srcCompat="@drawable/ic_shuffle_white_24dp" />
+        <ImageButton
+            android:id="@+id/action_select"
+            style="@style/CardFlatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:tint="#aaa"
+            app:srcCompat="@drawable/ic_check_white_24dp" />
 
-    <ImageButton
-        android:id="@+id/action_deselect"
-        style="@style/CardFlatButton"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:tint="#aaa"
-        app:layout_constraintLeft_toRightOf="@id/action_shuffle"
-        app:layout_constraintTop_toBottomOf="@id/recycler"
-        app:srcCompat="@drawable/ic_clear_white_24dp" />
+        <ImageButton
+            android:id="@+id/action_shuffle"
+            style="@style/CardFlatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:tint="#aaa"
+            app:srcCompat="@drawable/ic_shuffle_white_24dp" />
+
+        <ImageButton
+            android:id="@+id/action_add"
+            style="@style/CardFlatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:tint="#aaa"
+            app:srcCompat="@drawable/ic_add_white_24dp" />
+
+        <ImageButton
+            android:id="@+id/action_deselect"
+            style="@style/CardFlatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:tint="#aaa"
+            app:srcCompat="@drawable/ic_clear_white_24dp" />
+
+    </LinearLayout>
+
 
     <ImageButton
         android:id="@+id/action_overflow"
@@ -75,7 +87,6 @@
         android:layout_height="30dp"
         android:scaleType="fitCenter"
         android:tint="#aaa"
-        app:layout_constraintBottom_toBottomOf="@id/action_deselect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recycler"
         app:srcCompat="@drawable/ic_more" />

@@ -42,17 +42,6 @@ class SearchTagsFragment : TagCollectionsFragment() {
     }
 
     val categories = arrayListOf(0, 100, 1000, 10000, 50000, 100000, 500000, 1000000, 10000000, Int.MAX_VALUE)
-//    val categories = arrayListOf(
-//            Pair(0, 100),
-//            Pair(100, 1000),
-//            Pair(1000, 10000),
-//            Pair(10000, 50000),
-//            Pair(50000, 100000),
-//            Pair(100000, 500000),
-//            Pair(500000, 1000000),
-//            Pair(1000000, 10000000),
-//            Pair(10000000, Int.MAX_VALUE)
-//    )
 
     fun displayResults(result: List<Tag>) {
         collections.clear()

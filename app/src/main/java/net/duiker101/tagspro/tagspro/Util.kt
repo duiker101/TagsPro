@@ -25,7 +25,7 @@ open class BasePagerListener(private val listener: (Int) -> Unit) : ViewPager.On
  */
 open class BaseQueryListener(private val listener: (String) -> Unit) : SearchView.OnQueryTextListener {
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if (query != null && !query.isEmpty()){
+        if (query != null && !query.isEmpty()) {
             listener(query)
             return true
         }
@@ -35,4 +35,24 @@ open class BaseQueryListener(private val listener: (String) -> Unit) : SearchVie
     override fun onQueryTextChange(newText: String?): Boolean {
         return false
     }
+}
+
+class TagsText : ArrayList<String>() {
+    fun update(text: String) {
+        clear()
+        addAll(text.split(" ").filter { it.isNotEmpty() })
+
+    }
+
+    fun hashed(): ArrayList<String> {
+        return ArrayList(this.map {
+            if (it.indexOf("#") < 0 && it.indexOf("@") < 0) "#$it" else it
+        })
+    }
+
+//    fun hashedText():String{
+//        this.map {
+//            if (it.indexOf("#") < 0 && it.indexOf("@") < 0) "#$it" else it
+//        }.flatMap {  }
+//    }
 }

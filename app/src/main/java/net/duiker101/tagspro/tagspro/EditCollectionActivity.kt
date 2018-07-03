@@ -15,7 +15,8 @@ import kotlinx.android.synthetic.main.activity_edit_collection.*
 
 
 class EditCollectionActivity : AppCompatActivity() {
-    val tags = ArrayList<String>()
+//    val tags = ArrayList<String>()
+    val tags = TagsText()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +61,9 @@ class EditCollectionActivity : AppCompatActivity() {
     }
 
     fun updateTags(tagsText: String) {
-        tags.clear()
-        tags.addAll(tagsText.split(" ").filter { it.isNotEmpty() })
+//        tags.clear()
+//        tags.addAll(tagsText.split(" ").filter { it.isNotEmpty() })
+        tags.update(tagsText)
         tags_text.setHelperText(getString(R.string.tags_count, tags.size))
     }
 
@@ -72,9 +74,7 @@ class EditCollectionActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_save) {
-            val result = ArrayList(tags.map {
-                if (it.indexOf("#") < 0 && it.indexOf("@") < 0) "#$it" else it
-            })
+            val result = tags.hashed()
             val resultIntent = Intent()
             if (intent.hasExtra("id")) {
                 resultIntent.putExtra("id", intent.getStringExtra("id"))

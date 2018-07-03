@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * update a collection in the persistance and notify the main collections frag that it changed
      */
-    private fun editCollection(collectionId: String, title: String, tags: ArrayList<String>) {
+    fun editCollection(collectionId: String, title: String, tags: ArrayList<String>) {
         // if we don't collapse here there can be some problem with the bar when we come from the other
         // activity. Because the keyboard there will push the bar up
         setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
