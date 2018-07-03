@@ -56,6 +56,7 @@ class ActiveTagsPanelFragment : Fragment() {
                 it.active = false
                 EventBus.getDefault().post(TagEvent(it))
             }
+            (activity as MainActivity).setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
             activeTagsAdapter.notifyDataSetChanged()
         }
 
@@ -103,8 +104,12 @@ class ActiveTagsPanelFragment : Fragment() {
     }
 
     private fun copyActiveTags() {
+        if (activeTags.size > 30) {
+            Snackbar.make(view!!, getString(R.string.too_many_tags_selected), Snackbar.LENGTH_SHORT).show()
+            return
+        }
         if (activeTags.size == 0) {
-            Snackbar.make(bottomSheet, getString(R.string.no_tags_selected), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view!!, getString(R.string.no_tags_selected), Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -124,18 +129,17 @@ class ActiveTagsPanelFragment : Fragment() {
         val spaceBetween = preferences.getBoolean("enable_space", true)
 
         copy.forEach {
-            if (onePerLine)
-                result.appendln(it.name)
-            else if (spaceBetween)
-                result.append("${it.name} ")
-            else
-                result.append(it.name)
+            when {
+                onePerLine -> result.appendln(it.name)
+                spaceBetween -> result.append("${it.name} ")
+                else -> result.append(it.name)
+            }
         }
 
         val clip = ClipData.newPlainText("hashtags", result.toString())
         clipboard.primaryClip = clip
 
-        val snack = Snackbar.make(bottomSheet, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
+        val snack = Snackbar.make(view!!, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
         snack.setAction(R.string.open_instagram) {
             val launchIntent = activity?.packageManager?.getLaunchIntentForPackage("com.instagram.android")
             if (launchIntent != null) {

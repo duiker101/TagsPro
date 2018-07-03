@@ -47,10 +47,11 @@ class TagView(context: Context, attributes: AttributeSet?) :
      * Update he background color based on the model state
      */
     fun updateBackground() {
-        if (tag.active)
-            background.colorFilter = LightingColorFilter(0x000000, 0x55efc4)
-        else
-            background.colorFilter = LightingColorFilter(0x000000, 0xeeeeee)
+        if (tag.active) {
+            background.colorFilter = LightingColorFilter(0x000000, context.resources.getColor(R.color.tag_background_active))
+        } else {
+            background.colorFilter = LightingColorFilter(0x000000, context.resources.getColor(R.color.tag_background_empty))
+        }
     }
 }
 

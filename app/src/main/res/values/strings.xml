@@ -28,5 +28,10 @@
     <string name="backup">Backup</string>
     <string name="preference_export">Export</string>
     <string name="preference_import">Import</string>
+    <string name="shares_count">Shared ~%s times</string>
+    <string name="too_many_tags_selected">Too many tags selected, you can have only 30!</string>
 
+
+    <string name="admob_banner_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_banner">ca-app-pub-2480387246992720/4461098777</string>
 </resources>

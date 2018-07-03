@@ -12,6 +12,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
@@ -40,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        MobileAds.initialize(this, "ca-app-pub-2480387246992720~6540467205")
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -73,11 +77,18 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // TODO changing this changes the filter and highlights different text in the tags
         search_text.setOnQueryTextListener(BaseQueryListener {
             pagerAdapter.searchFragment.search(it)
         })
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_wrapper)
+
+        if (resources.getBoolean(R.bool.pro)) {
+            adView.visibility = View.GONE
+        } else {
+            adView.loadAd(AdRequest.Builder().build())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
