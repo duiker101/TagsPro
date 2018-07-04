@@ -50,6 +50,7 @@
             style="@style/CardFlatButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:contentDescription="@string/select_all"
             android:tint="#aaa"
             app:srcCompat="@drawable/ic_check_white_24dp" />
 
@@ -58,6 +59,7 @@
             style="@style/CardFlatButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:contentDescription="@string/random_select"
             android:tint="#aaa"
             app:srcCompat="@drawable/ic_shuffle_white_24dp" />
 
@@ -66,7 +68,9 @@
             style="@style/CardFlatButton"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
+            android:contentDescription="@string/quick_add"
             android:tint="#aaa"
+            android:visibility="gone"
             app:srcCompat="@drawable/ic_add_white_24dp" />
 
         <ImageButton
@@ -74,6 +78,7 @@
             style="@style/CardFlatButton"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
+            android:contentDescription="@string/deselect_all"
             android:tint="#aaa"
             app:srcCompat="@drawable/ic_clear_white_24dp" />
 
@@ -85,6 +90,7 @@
         style="@style/CardFlatButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:contentDescription="@string/more_options"
         android:scaleType="fitCenter"
         android:tint="#aaa"
         app:layout_constraintEnd_toEndOf="parent"
