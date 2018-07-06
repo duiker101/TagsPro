@@ -1,7 +1,10 @@
 package net.duiker101.tagspro.tagspro.search
 
+import android.support.design.widget.Snackbar
+import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_main.*
 import net.duiker101.tagspro.tagspro.MainActivity
 import net.duiker101.tagspro.tagspro.R
 import net.duiker101.tagspro.tagspro.api.InstgramApi
@@ -30,15 +33,20 @@ class SearchTagsFragment : TagCollectionsFragment() {
 
         (activity as MainActivity).dismissKeyboard()
 
+        (activity as MainActivity).setProgressVisibility(View.VISIBLE)
+
         val subscription = InstgramApi.search(text)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {
-                    // TODO error
-                }
-                .subscribe {
+                .subscribe({
                     displayResults(it.hashtags.map { it.hashtag })
-                }
+                    (activity as MainActivity).setProgressVisibility(View.GONE)
+                }, {
+                    it.printStackTrace()
+                    if (view != null)
+                        Snackbar.make(content, R.string.search_error, Snackbar.LENGTH_SHORT).show()
+                    (activity as MainActivity).setProgressVisibility(View.GONE)
+                })
     }
 
     val categories = arrayListOf(0, 100, 1000, 10000, 50000, 100000, 500000, 1000000, 10000000, Int.MAX_VALUE)
@@ -52,17 +60,16 @@ class SearchTagsFragment : TagCollectionsFragment() {
             map.put(it, ArrayList())
         }
 
-
         result.forEach {
             // this is important because the results of the search don't have a #
-            it.name= "#${it.name}"
+            it.name = "#${it.name}"
             map[getKeyForCount(it.media_count)]?.add(it)
         }
 
         map.map {
             val count = convertValueToStr(it.key)
             val title = getString(R.string.shares_count, count)
-            val collection = TagCollection(title , UUID.randomUUID().toString())
+            val collection = TagCollection(title, UUID.randomUUID().toString())
             collection.order = it.key
             collection.tags.addAll(it.value)
             collections.add(collection)
@@ -72,7 +79,6 @@ class SearchTagsFragment : TagCollectionsFragment() {
         collections.sortBy { -it.order }
 
         updateCollectionsSelection()
-
     }
 
     fun convertValueToStr(value: Int): String {

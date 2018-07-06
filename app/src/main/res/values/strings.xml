@@ -42,4 +42,5 @@
     <string name="deselect_all">Deselect all</string>
     <string name="save_as_collection">Save as collection</string>
     <string name="shuffle_selected">Shuffle selected</string>
+    <string name="search_error">Error while searching, please try again</string>
 </resources>

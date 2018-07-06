@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             // if we select the search hide the fab and show the search
             if (position == 1) {
                 setFabVisibility(View.GONE)
-                search_text.visibility = View.VISIBLE
+                search_layout.visibility = View.VISIBLE
                 if (search_text.query.isEmpty()) {
                     // if the search is empty we want to focus on it, this will bring up the keyboard
                     // so just reduce the activeTagsBar to not clutter the screen
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                     setBottomBarState(BottomSheetBehavior.STATE_COLLAPSED)
                 }
             } else {
-                search_text.visibility = View.GONE
+                search_layout.visibility = View.GONE
                 setFabVisibility(View.VISIBLE)
             }
         })
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_wrapper)
 
-        if (resources.getBoolean(R.bool.pro)) {
+        if (resources.getBoolean(R.bool.is_pro)) {
             adView.visibility = View.GONE
         } else {
             adView.loadAd(AdRequest.Builder().build())
@@ -166,6 +166,11 @@ class MainActivity : AppCompatActivity() {
         } else if (visibility == View.VISIBLE && fab.visibility != View.VISIBLE) {
             fab.show()
         }
+    }
+
+    fun setProgressVisibility(visibility: Int) {
+        progress.visibility = visibility
+
     }
 
     fun setBottomBarState(state: Int) {

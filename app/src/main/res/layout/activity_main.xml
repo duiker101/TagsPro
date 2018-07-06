@@ -26,19 +26,35 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
-                <android.support.v7.widget.SearchView
-                    android:id="@+id/search_text"
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/search_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:queryHint="Search"
-                    android:visibility="gone" />
-            </android.support.v7.widget.Toolbar>
+                    android:layout_height="wrap_content">
 
+                    <android.support.v7.widget.SearchView
+                        android:id="@+id/search_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:queryHint="Search"
+                        app:iconifiedByDefault="false"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toLeftOf="@id/progress" />
+
+                    <ProgressBar
+                        android:id="@+id/progress"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v7.widget.Toolbar>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
         </android.support.design.widget.AppBarLayout>
 
         <android.support.constraint.ConstraintLayout
@@ -76,8 +92,7 @@
             android:layout_height="wrap_content"
             app:behavior_hideable="false"
             app:behavior_peekHeight="@dimen/bottom_bar_peek"
-            app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-            >
+            app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
             <fragment
                 android:id="@+id/activeTagsFragment"
@@ -89,14 +104,14 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+    <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/admob_banner_test"
-        ads:layout_constraintBottom_toBottomOf="parent"
-        ads:layout_constraintTop_toBottomOf="@id/main_content" />
+        app:adSize="BANNER"
+        app:adUnitId="@string/admob_banner_test"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_content" />
 </android.support.constraint.ConstraintLayout>
