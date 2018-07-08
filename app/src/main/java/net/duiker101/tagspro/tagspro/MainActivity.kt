@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main_toolbar.*
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.api.TagPersistance

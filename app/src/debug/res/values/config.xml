@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="is_pro">false</bool>
+    <string name="admob_banner">ca-app-pub-3940256099942544/6300978111</string>
 </resources>

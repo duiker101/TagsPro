@@ -54,6 +54,7 @@ class SearchTagsFragment : TagCollectionsFragment() {
     fun displayResults(result: List<Tag>) {
         collections.clear()
 
+        recycler.scrollToPosition(0)
         // init the map array
         val map = HashMap<Int, ArrayList<Tag>>()
         categories.forEach {

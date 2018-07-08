@@ -128,11 +128,14 @@ class SettingsActivity : AppCompatActivity() {
         val inStream = FileInputStream(src)
         val input = inStream.bufferedReader().use { it.readText() }
         IOUtils.write(input, contentResolver.openOutputStream(dst))
+        Snackbar.make(findViewById(android.R.id.content), getString(R.string.export_successs), Snackbar.LENGTH_SHORT).show()
     }
 
     private fun import(src: Uri, dst: File) {
         val input = contentResolver.openInputStream(src).bufferedReader().use { it.readText() }
         FileUtils.writeStringToFile(dst, input)
+        EventBus.getDefault().post(ReloadEvent())
+        Snackbar.make(findViewById(android.R.id.content), getString(R.string.import_success), Snackbar.LENGTH_SHORT).show()
     }
 }
 
