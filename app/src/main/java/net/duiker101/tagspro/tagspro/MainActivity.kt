@@ -25,6 +25,7 @@ import net.duiker101.tagspro.tagspro.search.SearchTagsFragment
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
+
 /**
  * Entry point of the app
  */
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(Intent(this, EditCollectionActivity::class.java), REQUEST_CREATE_COLLECTION)
         }
 
-        pagerAdapter = MainPagerAdapter(supportFragmentManager)
+        pagerAdapter = MainPagerAdapter(supportFragmentManager, getString(R.string.tags_collection_default_msg), "")
         pager.adapter = pagerAdapter
         pager.addOnPageChangeListener(BasePagerListener { position ->
             // if we select the search hide the fab and show the search
@@ -90,6 +91,19 @@ class MainActivity : AppCompatActivity() {
         } else {
             adView.loadAd(AdRequest.Builder().build())
         }
+
+
+//        TutoShowcase.from(this)
+//                .setContentView(R.layout.tutorial)
+//                .on(R.id.) //a view in actionbar
+//                .addCircle()
+//                .withBorder()
+//                .onClick(View.OnClickListener {
+//                    //custom action
+//                })
+//                .on(R.id.swipable)
+//                .displaySwipableRight()
+//                .show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -117,6 +131,9 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_settings) {
             startActivity(Intent(this, SettingsActivity::class.java))
+            return true
+        } else if (item.itemId == R.id.action_collapse) {
+            pagerAdapter.collectionsFragment.collapseAll()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -189,9 +206,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class MainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
-    val collectionsFragment = TagCollectionsFragment()
-    val searchFragment = SearchTagsFragment()
+class MainPagerAdapter(fm: FragmentManager, tagsMsg: String, searchMsg: String) : FragmentStatePagerAdapter(fm) {
+    val collectionsFragment = TagCollectionsFragment.newInstance(tagsMsg)
+    val searchFragment = SearchTagsFragment.newInstance(searchMsg)
 
     override fun getCount(): Int = 2
 
@@ -208,4 +225,5 @@ class MainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
             return "Search"
         return ""
     }
+
 }

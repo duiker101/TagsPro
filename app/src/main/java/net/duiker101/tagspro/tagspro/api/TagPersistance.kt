@@ -88,4 +88,9 @@ object ExpansionPersistance {
             it.write(json.toByteArray())
         }
     }
+
+    fun collapseAll(context: Context) {
+        expansions.keys.forEach { expansions[it] = false }
+        save(context, expansions)
+    }
 }

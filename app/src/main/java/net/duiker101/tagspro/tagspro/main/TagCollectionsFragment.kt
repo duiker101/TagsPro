@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.content_tag_collection.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import net.duiker101.tagspro.tagspro.MainActivity
 import net.duiker101.tagspro.tagspro.R
+import net.duiker101.tagspro.tagspro.api.ExpansionPersistance
 import net.duiker101.tagspro.tagspro.api.Tag
 import net.duiker101.tagspro.tagspro.api.TagCollection
 import net.duiker101.tagspro.tagspro.api.TagPersistance
@@ -24,8 +25,20 @@ import org.greenrobot.eventbus.ThreadMode
 
 open class TagCollectionsFragment : Fragment() {
 
+    companion object {
+        fun newInstance(defaultMsg: String): TagCollectionsFragment {
+            val args = Bundle()
+            args.putString("msg", defaultMsg)
+            val fragment = TagCollectionsFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+
     val collections = ArrayList<TagCollection>()
     lateinit var adapter: RecyclerView.Adapter<*>
+    var defaultMsg = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -36,13 +49,17 @@ open class TagCollectionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(arguments?.containsKey("msg") == true){
+            defaultMsg = arguments!!.getString("msg")
+        }
+
         loadTags()
 
         viewManager = LinearLayoutManager(activity)
         viewManager.recycleChildrenOnDetach = true
         recycler.layoutManager = viewManager
 
-        adapter = TagCollectionsAdapter(context!!, collections)
+        adapter = TagCollectionsAdapter(context!!, collections,defaultMsg)
         recycler.adapter = adapter
 
         // this listeners makes hide and shows the FAB when the recycler is scrolled
@@ -150,6 +167,13 @@ open class TagCollectionsFragment : Fragment() {
         collections.add(collection)
         updateCollectionSelection(collection)
         adapter.notifyItemInserted(collections.size - 1)
+    }
+
+    fun collapseAll() {
+        if (context != null) {
+            ExpansionPersistance.collapseAll(context!!)
+            adapter.notifyDataSetChanged()
+        }
     }
 }
 

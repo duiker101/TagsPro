@@ -1,5 +1,6 @@
 package net.duiker101.tagspro.tagspro.search
 
+import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,6 +17,16 @@ import kotlin.collections.HashMap
 
 
 class SearchTagsFragment : TagCollectionsFragment() {
+
+    companion object {
+        fun newInstance(defaultMsg: String): SearchTagsFragment {
+            val args = Bundle()
+            args.putString("msg", defaultMsg)
+            val fragment = SearchTagsFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     /**
      * We override this to stop the saved tags from loading

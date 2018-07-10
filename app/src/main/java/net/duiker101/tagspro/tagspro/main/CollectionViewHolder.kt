@@ -155,3 +155,5 @@ class CollectionHolder(val view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 }
+
+class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
