@@ -166,7 +166,10 @@ open class TagCollectionsFragment : Fragment() {
     fun addCollection(collection: TagCollection) {
         collections.add(collection)
         updateCollectionSelection(collection)
-        adapter.notifyItemInserted(collections.size - 1)
+        if(collections.size == 1)
+            adapter.notifyDataSetChanged()
+        else
+            adapter.notifyItemInserted(collections.size - 1)
     }
 
     fun collapseAll() {

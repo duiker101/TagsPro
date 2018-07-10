@@ -104,10 +104,11 @@ class ActiveTagsPanelFragment : Fragment() {
     }
 
     private fun copyActiveTags() {
-        if (activeTags.size > 30) {
-            Snackbar.make(view!!, getString(R.string.too_many_tags_selected), Snackbar.LENGTH_SHORT).show()
-            return
-        }
+//        if (activeTags.size > 30) {
+//            Snackbar.make(view!!, getString(R.string.too_many_tags_selected), Snackbar.LENGTH_SHORT).show()
+//            return
+//        }
+
         if (activeTags.size == 0) {
             Snackbar.make(view!!, getString(R.string.no_tags_selected), Snackbar.LENGTH_SHORT).show()
             return
