@@ -141,12 +141,12 @@ class ActiveTagsPanelFragment : Fragment() {
         clipboard.primaryClip = clip
 
         val snack = Snackbar.make(view!!, getString(R.string.copy_successful, activeTags.size), Snackbar.LENGTH_SHORT)
-//        snack.setAction(R.string.open_instagram) {
-//            val launchIntent = activity?.packageManager?.getLaunchIntentForPackage("com.instagram.android")
-//            if (launchIntent != null) {
-//                startActivity(launchIntent)//null pointer check in case package name was not found
-//            }
-//        }
+        snack.setAction(R.string.open_instagram) {
+            val launchIntent = activity?.packageManager?.getLaunchIntentForPackage("com.instagram.android")
+            if (launchIntent != null) {
+                startActivity(launchIntent)//null pointer check in case package name was not found
+            }
+        }
         // to have the snackbar on top
 //            val view = snack.view
 //            val params = view.layoutParams as FrameLayout.LayoutParams
